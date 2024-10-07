@@ -3,7 +3,7 @@ import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   server: {
-    preset: 'node-server',
+    preset: 'cloudflare-pages',
   },
   vite: {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return

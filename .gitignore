@@ -12,6 +12,7 @@
 /.vercel
 /.vinxi
 /.output
+/dist
 
 # misc
 .DS_Store
