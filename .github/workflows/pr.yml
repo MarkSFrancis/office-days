@@ -20,3 +20,8 @@ jobs:
         run: npm run test:setup
       - name: Test
         run: npm run test:all
+      - name: Deploy to preview
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: pages deploy ./dist --project-name=office-days
