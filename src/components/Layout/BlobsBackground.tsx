@@ -47,6 +47,7 @@ const BlobsSvg: Component<BlobsSvgProps> = (props) => {
         <Blob cx="70.5" cy="458.5" fill={local.blobColors[5]} />
         <Blob cx="400.5" cy="458.5" fill={local.blobColors[6]} />
         <Blob cx="400.5" cy="268.5" fill={local.blobColors[5]} />
+        <Blob cx="260.5" cy="450.5" fill={local.blobColors[0]} />
         <Blob cx="426.5" cy="-0.5" fill={local.blobColors[6]} />
         <Blob cx="560.5" cy="100" fill={local.blobColors[6]} />
       </pattern>

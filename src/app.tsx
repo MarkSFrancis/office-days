@@ -6,10 +6,12 @@ import { MetaProvider, Title } from '@solidjs/meta';
 import { NavAuth } from './features/auth/NavAuth';
 import { cn } from './lib/utils';
 import { Toaster } from './components/ui/toast';
+import { AppBackground } from './components/Layout/AppBackground';
 
 export default function App() {
   return (
     <MetaProvider>
+      <Title>Office Days</Title>
       <Router
         root={(props) => {
           const navigating = useIsRouting();
@@ -17,8 +19,7 @@ export default function App() {
           return (
             <Suspense>
               <div class="grid min-h-screen grid-rows-[auto,_minmax(0,_1fr)]">
-                <Title>Office Days</Title>
-                <nav class="border-b relative">
+                <nav class="border-b relative bg-white/60">
                   <div
                     class={cn(
                       'absolute hidden animate-opacity-pulse bg-primary/80 h-1.5 w-full',
@@ -27,10 +28,15 @@ export default function App() {
                   ></div>
                   <div class="p-2 flex w-full max-w-screen-lg mx-auto">
                     <div class="flex-grow"></div>
-                    <NavAuth />
+
+                    <Suspense>
+                      <NavAuth />
+                    </Suspense>
                   </div>
                 </nav>
-                <div class="bg-gray-50">{props.children}</div>
+                <AppBackground>
+                  <Suspense>{props.children}</Suspense>
+                </AppBackground>
               </div>
             </Suspense>
           );

@@ -14,8 +14,6 @@ import { authApi, SignInSchema } from '~/features/auth/api';
 import { TextField, TextFieldLabel } from '~/components/ui/text-field';
 import { FormInput } from '~/components/form/FormInput';
 
-// TODO: error message when sign in fails (e.g. wrong email + password)
-
 export default function SignInPage() {
   const signingIn = useSubmission(authApi.signIn);
 
