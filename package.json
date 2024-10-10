@@ -7,7 +7,7 @@
     "dev": "vinxi dev",
     "build": "vinxi build",
     "start": "vinxi start",
-    "test": "vitest --changed main",
+    "test": "vitest --changed origin/main",
     "test:all": "vitest run",
     "test:setup": "npx playwright install chromium --with-deps",
     "db": "drizzle-kit --config ./scripts/drizzle-kit.config.ts",
