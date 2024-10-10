@@ -1,7 +1,5 @@
 import eslint from '@eslint/js';
 import ts from 'typescript-eslint';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default ts.config(
   {
@@ -65,27 +63,6 @@ export default ts.config(
     },
   },
   {
-    plugins: { 'react-hooks': reactHooks },
-    rules: {
-      ...reactHooks.configs.recommended.rules,
-    },
-  },
-  {
-    plugins: { 'react-refresh': reactRefresh },
-    rules: {
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
-    },
-    ignores: [
-      // Ignore shadcn components, as they often come with constants + components in the same file
-      'src/components/ui/**',
-      // Ignore route entry points, as they export both routes + preload functions
-      'app/routes/**',
-    ],
-  },
-  {
     rules: {
       quotes: ['warn', 'single', { avoidEscape: true }],
       semi: ['warn', 'always'],
@@ -96,11 +73,6 @@ export default ts.config(
         {
           name: 'node:test',
           message: 'Use vitest instead',
-        },
-        {
-          name: '@react-email/components',
-          message:
-            'Use the relevant component directly (e.g. @react-email/text)',
         },
       ],
     },

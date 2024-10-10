@@ -1,18 +1,23 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "moduleResolution": "Bundler",
+    "target": "ESNext",
     "module": "ESNext",
-    "target": "ES2022",
-    "skipLibCheck": true,
-    "strictNullChecks": true,
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "allowJs": true,
+    "strict": true,
+    "noEmit": true,
     "types": [
+      "vinxi/types/client",
       "@vitest/browser/matchers",
       "@vitest/browser/providers/playwright"
     ],
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./src/*"]
     }
   }
 }

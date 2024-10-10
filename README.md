@@ -8,17 +8,18 @@ Track which days your teasm are in the office, so you can be in on the same day!
 
 - Git
 - NodeJS
+- A supabase connection string
 
 ## Steps
 
 1. Clone the project onto your local machine
 1. Open a shell at the root of the project and run `npm i`
 1. Run `npm test` to run all unit tests
-1. Set `SUPABASE_DB_CONNECTION_STRING` in [`.dev.vars`](./.dev.vars) to the supabase connection string you got earlier
+1. Set `SUPABASE_DB_CONNECTION_STRING` in [`.env.local`](./.env.local) to the supabase connection string you got earlier
 1. Set `DRIZZLE_KIT_CONNECTION_STRING` in the same file to the same string, but set the port number to `5432`
 
    ```sh
-   # .dev.vars
+   # .env.local
    SUPABASE_DB_CONNECTION_STRING="postgresql://[YOUR_DATABASE_USER]:[YOUR_PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
    DRIZZLE_KIT_CONNECTION_STRING="postgresql://[YOUR_DATABASE_USER]:[YOUR_PASSWORD]@aws-0-us-east-1.pooler.supabase.com:5432/postgres"
    ```
