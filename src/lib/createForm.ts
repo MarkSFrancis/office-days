@@ -1,6 +1,13 @@
 import { parseWithZod } from '@conform-to/zod';
 import { Action, useSubmission } from '@solidjs/router';
-import { createSignal, createMemo, ComponentProps, mergeProps } from 'solid-js';
+import {
+  createSignal,
+  createMemo,
+  ComponentProps,
+  mergeProps,
+  Accessor,
+  createEffect,
+} from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { z, ZodObject, ZodRawShape } from 'zod';
 import { ButtonProps } from '~/components/ui/button';
@@ -46,6 +53,10 @@ export function createForm<TSchema extends FormSchema = FormSchema>(args: {
   >({});
 
   toastSubmission(submission);
+
+  createEffect(() => {
+    setErrors(submission.result?.error);
+  });
 
   const validate = () => {
     if (args.schema) {
@@ -125,108 +136,106 @@ export function createForm<TSchema extends FormSchema = FormSchema>(args: {
     };
   };
 
-  const fieldErrors = () => {
+  const fieldErrors = createMemo(() => {
     const fieldErrors: Record<string, string[] | null | undefined> = {};
 
     if (Object.keys(fields).length === 0) {
       // SSR
-      for (const k in submission.result?.error) {
-        fieldErrors[k] = submission.result.error[k];
+      for (const [key, value] of Object.entries(errors() ?? {})) {
+        fieldErrors[key] = value;
       }
     } else {
       // CSR
-      for (const fieldName in fields) {
-        const field = fields[fieldName];
+      for (const [fieldName, field] of Object.entries(fields)) {
         const newErrors = errors()?.[fieldName];
 
         if (newErrors && (field.dirty() || formSubmitted())) {
           fieldErrors[fieldName] = newErrors;
         } else {
           // Used to be an error - isn't anymore
-          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-          delete fieldErrors[fieldName];
+          fieldErrors[fieldName] = undefined;
         }
       }
     }
 
     return fieldErrors;
-  };
+  });
 
-  const fieldProps = (
+  const createFieldProps = (
     name: string,
     customProps: ComponentProps<'input'>
-  ): ComponentProps<'input'> => {
-    const allErrors = fieldErrors();
-    const initialValue = args.initialValues?.[name];
+  ): Accessor<ComponentProps<'input'>> =>
+    createMemo(() => {
+      const allErrors = fieldErrors();
+      const initialValue = args.initialValues?.[name];
 
-    const lastRequestFailed = submission.result?.status === 'error';
-    const lastRequestValue = submission.input?.[0].get(name);
-    const hasValidationError = !!allErrors[name];
+      const lastRequestFailed = submission.result?.status === 'error';
+      const lastRequestValue = submission.input?.[0].get(name);
+      const hasValidationError = !!allErrors[name];
 
-    const zodShape = args.schema?.shape[name];
+      const zodShape = args.schema?.shape[name];
 
-    let value: ComponentProps<'input'>['value'] | undefined;
-    let checked: boolean | undefined;
+      let value: ComponentProps<'input'>['value'] | undefined;
+      let checked: boolean | undefined;
 
-    if (lastRequestFailed && typeof lastRequestValue === 'string') {
-      value = lastRequestValue;
-    } else if (typeof customProps.value !== 'undefined') {
-      value = customProps.value;
-    } else if (typeof customProps.checked !== 'undefined') {
-      console.info('Setting checked from custom props', customProps.checked);
-      checked = customProps.checked;
-    } else if (
-      typeof initialValue === 'string' ||
-      typeof initialValue === 'number' ||
-      typeof initialValue === 'bigint'
-    ) {
-      value = initialValue;
-    } else if (typeof initialValue === 'boolean') {
-      checked = initialValue;
-    }
+      if (lastRequestFailed && typeof lastRequestValue === 'string') {
+        value = lastRequestValue;
+      } else if (typeof customProps.value !== 'undefined') {
+        value = customProps.value;
+      } else if (typeof customProps.checked !== 'undefined') {
+        checked = customProps.checked;
+      } else if (
+        typeof initialValue === 'string' ||
+        typeof initialValue === 'number' ||
+        typeof initialValue === 'bigint'
+      ) {
+        value = initialValue;
+      } else if (typeof initialValue === 'boolean') {
+        checked = initialValue;
+      }
 
-    const merged = mergeProps(
-      zodCanUseHtmlInputProps(zodShape)
-        ? zodToHtmlInputProps(zodShape)
-        : undefined,
-      customProps,
-      {
-        name,
-        value,
-        checked,
-        autofocus:
-          submission.result && lastRequestFailed
-            ? hasValidationError
-            : customProps.autofocus,
-        class: cn(
-          customProps.class,
-          hasValidationError && 'border-destructive'
-        ),
-      } satisfies ComponentProps<'input'>
-    );
+      const merged = mergeProps(
+        zodCanUseHtmlInputProps(zodShape)
+          ? zodToHtmlInputProps(zodShape)
+          : undefined,
+        customProps,
+        {
+          name,
+          value,
+          checked,
+          autofocus:
+            submission.result && lastRequestFailed
+              ? hasValidationError
+              : customProps.autofocus,
+          class: cn(
+            customProps.class,
+            hasValidationError && 'border-destructive'
+          ),
+        } satisfies ComponentProps<'input'>
+      );
 
-    return merged;
-  };
+      return merged;
+    });
 
-  const formProps = () => {
+  const formProps = createMemo(() => {
     return {
       method: 'post',
       action: args.action,
       ref: formSubmit,
     } satisfies ComponentProps<'form'>;
-  };
+  });
 
-  const submitProps = () => {
+  const submitProps = createMemo(() => {
     return {
       type: 'submit',
       disabled: submission.pending && !args.allowParallelSubmit,
       isPending: submission.pending,
     } satisfies ButtonProps;
-  };
+  });
 
   return {
     field,
-    fieldProps,
+    createFieldProps,
     formProps,
     fieldErrors,
     submitProps,

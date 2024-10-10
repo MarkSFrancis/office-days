@@ -1,76 +1,44 @@
 import { parseWithZod } from '@conform-to/zod';
-import { Action, action, cache } from '@solidjs/router';
 import { z, ZodTypeAny } from 'zod';
 import { SubmissionResult } from '@conform-to/dom';
+import { User } from '@supabase/supabase-js';
+import { supabaseClient } from './supabase/supabaseClient';
 
-export const authenticatedGet = <TArgs extends unknown[], TResult = void>(
-  next: (...args: TArgs) => Promise<TResult>,
-  name: string
-) =>
-  cache<(...args: TArgs) => Promise<TResult>>((...args) => {
-    'use server';
+// TODO: make it run on the server instead + provide async context propagation for who the current user is
+export const withAuth = async <TResponse = unknown>(
+  next: (user: User) => Promise<TResponse>
+): Promise<TResponse | SubmissionResult> => {
+  const usr = await supabaseClient.auth.getUser();
+  if (usr.error) {
+    return {
+      error: {
+        reason: ['Unauthorized'],
+      },
+      status: 'error',
+    } satisfies SubmissionResult;
+  }
 
-    throw new Error('Not implemented');
-
-    return next(...args);
-  }, name);
-
-export const authenticatedPost = <TArgs extends unknown[], TResult = void>(
-  next: (...args: TArgs) => Promise<TResult>,
-  name: string
-) =>
-  action<TArgs, TResult>((...args) => {
-    'use server';
-
-    throw new Error('Not implemented');
-
-    // return next(...args);
-  }, name);
-
-export const publicGet = <TArgs extends unknown[], TResult = void>(
-  next: (...args: TArgs) => Promise<TResult>,
-  name: string
-) =>
-  cache<(...args: TArgs) => Promise<TResult>>((...args) => {
-    'use server';
-
-    return next(...args);
-  }, name);
-
-export const publicPost = <TArgs extends unknown[], TResult = void>(
-  next: (...args: TArgs) => Promise<TResult>,
-  name: string
-): Action<TArgs, TResult> =>
-  action((...args) => {
-    'use server';
-
-    return next(...args);
-  }, name);
+  return next(usr.data.user);
+};
 
 export type RequestWithBodyEvent<TBody> = Omit<Request, 'body'> & {
   body: TBody;
 };
 
-export const withFormData =
-  <
-    TRequestSchema extends ZodTypeAny,
-    TArgs extends unknown[] = [],
-    TResponse = unknown,
-  >(
-    schema: TRequestSchema,
-    next: (...args: [...TArgs, z.output<TRequestSchema>]) => Promise<TResponse>
-  ) =>
-  async (
-    ...args: [...TArgs, FormData]
-  ): Promise<TResponse | SubmissionResult> => {
-    const formData = args.slice(-1)[0] as FormData;
-    const otherArgs = args.slice(0, -1) as TArgs;
+export const withFormData = async <
+  TRequestSchema extends ZodTypeAny,
+  TResponse = unknown,
+>(
+  schema: TRequestSchema,
+  formData: FormData,
+  next: (data: z.output<TRequestSchema>) => Promise<TResponse>
+): Promise<TResponse | SubmissionResult> => {
+  'use server';
+  const validation = parseWithZod(formData, { schema });
 
-    const validation = parseWithZod(formData, { schema });
+  if (validation.status !== 'success') {
+    return validation.reply();
+  }
 
-    if (validation.status !== 'success') {
-      return validation.reply();
-    }
-
-    return next(...otherArgs, validation.value);
-  };
+  return next(validation.value);
+};

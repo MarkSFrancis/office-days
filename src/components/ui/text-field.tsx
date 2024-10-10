@@ -12,7 +12,7 @@ const TextField = TextFieldPrimitive.Root;
 type TextFieldInputProps<T extends ValidComponent = 'input'> =
   TextFieldPrimitive.TextFieldInputProps<T> & {
     class?: string | undefined;
-    type:
+    type?:
       | 'button'
       | 'checkbox'
       | 'color'

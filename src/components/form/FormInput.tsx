@@ -1,6 +1,13 @@
-import { Component, ComponentProps, For, JSX, splitProps } from 'solid-js';
+import {
+  Component,
+  ComponentProps,
+  For,
+  JSX,
+  Show,
+  splitProps,
+} from 'solid-js';
 import { useFormContext } from './Form';
-import { TextFieldErrorMessage, TextFieldInput } from '../ui/text-field';
+import { TextFieldInput } from '../ui/text-field';
 import { TextFieldInputProps } from '@kobalte/core/text-field';
 
 export type FormInputProps = ComponentProps<'input'> & {
@@ -15,39 +22,39 @@ export const FormInput: Component<FormInputProps> = (props) => {
     'validation',
     'hideErrors',
   ]);
-  const { field, fieldErrors, fieldProps } = useFormContext();
-
-  const renderValidation = () => {
-    if (customProps.hideErrors || passedProps.type === 'hidden') {
-      return null;
-    }
-
-    const errs = fieldErrors()[customProps.name];
-    if (!errs) {
-      return null;
-    }
-
-    if (customProps.validation) {
-      return customProps.validation(errs);
-    } else {
-      return (
-        <TextFieldErrorMessage>
-          <ul class="text-destructive">
-            <For each={errs}>{(err) => <li>{err}</li>}</For>
-          </ul>
-        </TextFieldErrorMessage>
-      );
-    }
-  };
+  const { field, fieldErrors, createFieldProps } = useFormContext();
+  const fieldProps = createFieldProps(customProps.name, passedProps);
 
   return (
     <>
-      <TextFieldInput
-        type="text"
-        {...(fieldProps(customProps.name, passedProps) as TextFieldInputProps)}
-        ref={field}
-      />
-      {renderValidation()}
+      <TextFieldInput {...(fieldProps() as TextFieldInputProps)} ref={field} />
+      <Show when={!customProps.hideErrors && passedProps.type !== 'hidden'}>
+        <Show when={fieldErrors()[customProps.name]}>
+          {(errors) => (
+            <FieldErrors
+              errors={errors()}
+              validation={customProps.validation}
+            />
+          )}
+        </Show>
+      </Show>
     </>
+  );
+};
+
+const FieldErrors = (props: {
+  errors: string[];
+  validation?: FormInputProps['validation'];
+}) => {
+  if (props.validation) {
+    return props.validation(props.errors);
+  }
+
+  return (
+    // TODO: add support for `TextFieldErrorMessage` via the `validationState` prop on the `TextField` component
+    // https://kobalte.dev/docs/core/components/text-field/#error-message
+    <ul class="text-destructive">
+      <For each={props.errors}>{(err) => <li>{err}</li>}</For>
+    </ul>
   );
 };

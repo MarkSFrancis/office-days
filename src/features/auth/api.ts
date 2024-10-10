@@ -1,8 +1,9 @@
 import { zodUtils } from '~/lib/zodUtils';
 import { supabaseClient } from '~/supabase/supabaseClient';
 import { z } from 'zod';
-import { authenticatedPost, publicPost, withFormData } from '../../api';
-import { cache, redirect } from '@solidjs/router';
+import { withAuth, withFormData } from '../../api';
+import { action, cache, redirect } from '@solidjs/router';
+import { SubmissionResult } from '@conform-to/dom';
 
 export const SignInSchema = z.object({
   email: zodUtils.string().email(),
@@ -34,35 +35,45 @@ export const authApi = {
         .then((u) => u.data.session?.user ?? false),
     `${apiId}/getUser`
   ),
-  signIn: publicPost(
-    withFormData(SignInSchema, async (creds) => {
+  signIn: action((data: FormData) => {
+    'use server';
+    return withFormData(SignInSchema, data, async (creds) => {
       const res = await supabaseClient.auth.signInWithPassword(
         SignInSchema.parse(creds)
       );
 
       if (res.error) {
-        throw res.error;
+        return {
+          error: {
+            password: ['Invalid email or password'],
+          },
+          status: 'error',
+        } satisfies SubmissionResult;
       } else {
         await supabaseClient.auth.setSession(res.data.session);
       }
 
       throw redirect('/');
-    }),
-    `${apiId}/signIn`
-  ),
-  signUp: publicPost(
-    withFormData(SignUpSchema, async (creds: z.output<typeof SignInSchema>) => {
-      const res = await supabaseClient.auth.signUp(creds);
+    });
+  }, `${apiId}/signIn`),
+  signUp: action((data: FormData) => {
+    'use server';
+    return withFormData(
+      SignUpSchema,
+      data,
+      async (creds: z.output<typeof SignInSchema>) => {
+        const res = await supabaseClient.auth.signUp(creds);
 
-      if (res.error) {
-        throw res.error;
+        if (res.error) {
+          throw res.error;
+        }
+        return res.data;
       }
-      return res.data;
-    }),
-    `${apiId}/signUp`
-  ),
-  requestResetPassword: publicPost(
-    withFormData(ResetPasswordSchema, async (creds) => {
+    );
+  }, `${apiId}/signUp`),
+  requestResetPassword: action((data: FormData) => {
+    'use server';
+    return withFormData(ResetPasswordSchema, data, async (creds) => {
       const res = await supabaseClient.auth.resetPasswordForEmail(creds.email, {
         redirectTo: `${window.location.origin}/auth/update-password`,
       });
@@ -71,32 +82,37 @@ export const authApi = {
         throw res.error;
       }
       return res.data;
-    }),
-    `${apiId}/requestResetPassword`
-  ),
-  updatePassword: authenticatedPost(
-    withFormData(
-      UpdatePasswordSchema,
-      async (creds: z.output<typeof UpdatePasswordSchema>) => {
-        const res = await supabaseClient.auth.updateUser({
-          password: creds.newPassword,
-        });
+    });
+  }, `${apiId}/requestResetPassword`),
+  updatePassword: action((data: FormData) => {
+    'use server';
+    return withAuth(() =>
+      withFormData(
+        UpdatePasswordSchema,
+        data,
+        async (creds: z.output<typeof UpdatePasswordSchema>) => {
+          const res = await supabaseClient.auth.updateUser({
+            password: creds.newPassword,
+          });
 
-        if (res.error) {
-          throw res.error;
+          if (res.error) {
+            throw res.error;
+          }
+          return res.data;
         }
-        return res.data;
+      )
+    );
+  }, `${apiId}/updatePassword`),
+  signOut: action(() => {
+    'use server';
+    return withAuth(async () => {
+      const res = await supabaseClient.auth.signOut();
+
+      if (res.error) {
+        throw res.error;
       }
-    ),
-    `${apiId}/updatePassword`
-  ),
-  signOut: authenticatedPost(async () => {
-    const res = await supabaseClient.auth.signOut();
 
-    if (res.error) {
-      throw res.error;
-    }
-
-    throw redirect('/auth/sign-in');
+      throw redirect('/auth/sign-in');
+    });
   }, `${apiId}/signOut`),
 } as const;
