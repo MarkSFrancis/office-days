@@ -2,7 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card';
 
 export default function Home() {
   return (
-    <div class="min-h-screen min-w-screen flex justify-center items-center gap-8 mx-8 flex-wrap">
+    <div class="min-h-full min-w-screen flex justify-center items-end gap-8 mx-8 flex-wrap">
       <Card class="flex flex-col items-start gap-4">
         <CardHeader>
           <CardTitle class="text-4xl font-light">Monday</CardTitle>
@@ -25,9 +25,6 @@ export default function Home() {
           <ul class="list-disc list-inside leading-8">
             <li>John</li>
             <li>David</li>
-            <li>Daniel</li>
-            <li>Sarah</li>
-            <li>Laura</li>
           </ul>
         </CardContent>
       </Card>

@@ -7,15 +7,10 @@ import { supabaseClient } from './supabase/supabaseClient';
 // TODO: make it run on the server instead + provide async context propagation for who the current user is
 export const withAuth = async <TResponse = unknown>(
   next: (user: User) => Promise<TResponse>
-): Promise<TResponse | SubmissionResult> => {
+): Promise<TResponse> => {
   const usr = await supabaseClient.auth.getUser();
   if (usr.error) {
-    return {
-      error: {
-        reason: ['Unauthorized'],
-      },
-      status: 'error',
-    } satisfies SubmissionResult;
+    throw new Error(usr.error.message);
   }
 
   return next(usr.data.user);

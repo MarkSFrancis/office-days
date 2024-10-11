@@ -10,6 +10,8 @@
     "allowJs": true,
     "strict": true,
     "noEmit": true,
+    "incremental": true,
+    "skipLibCheck": true,
     "types": [
       "vinxi/types/client",
       "@vitest/browser/matchers",

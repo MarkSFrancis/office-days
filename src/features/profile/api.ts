@@ -2,10 +2,10 @@ import { zodUtils } from '~/lib/zodUtils';
 import { z } from 'zod';
 import { supabaseClient } from '~/supabase/supabaseClient';
 import { useUser } from '../auth/hooks';
-import { authenticatedGet, authenticatedPost, withFormData } from '../../api';
+import { withAuth, withFormData } from '../../api';
 import { authApi } from '../auth/api';
 import { createEffect, createResource } from 'solid-js';
-import { reload } from '@solidjs/router';
+import { action, cache, reload } from '@solidjs/router';
 
 export const ProfileSchema = z.object({
   firstName: zodUtils.optional(zodUtils.string()),
@@ -17,7 +17,8 @@ const rootKey = 'profile';
 
 export const profileApi = {
   rootKey,
-  getProfile: authenticatedGet(async () => {
+  getProfile: cache(async () => {
+    'use server';
     const user = await authApi.getUser();
     if (!user) {
       throw new Error('User is not logged in');
@@ -35,28 +36,30 @@ export const profileApi = {
 
     return data as z.output<typeof ProfileSchema>;
   }, `${rootKey}/getProfile`),
-  updateProfile: authenticatedPost(
-    withFormData(ProfileSchema, async (data) => {
-      const user = await authApi.getUser();
-      if (!user) {
-        throw new Error('User is not logged in');
-      }
+  updateProfile: action((data: FormData) => {
+    'use server';
+    return withAuth(() =>
+      withFormData(ProfileSchema, data, async (data) => {
+        const user = await authApi.getUser();
+        if (!user) {
+          throw new Error('User is not logged in');
+        }
 
-      const { error } = await supabaseClient.from('profile').upsert({
-        user_id: user.id,
-        ...data,
-      });
+        const { error } = await supabaseClient.from('profile').upsert({
+          user_id: user.id,
+          ...data,
+        });
 
-      if (error) {
-        throw error;
-      }
+        if (error) {
+          throw error;
+        }
 
-      throw reload({
-        revalidate: profileApi.getProfile.key,
-      });
-    }),
-    `${rootKey}/updateProfile`
-  ),
+        throw reload({
+          revalidate: profileApi.getProfile.key,
+        });
+      })
+    );
+  }, `${rootKey}/updateProfile`),
 };
 
 export const useProfile = () => {

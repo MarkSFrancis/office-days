@@ -19,7 +19,7 @@ export const route = {
   },
 } satisfies RouteDefinition;
 
-function ProfilePage() {
+export default function ProfilePage() {
   const user = useUser();
   const profile = createAsync(() => profileApi.getProfile(), {
     deferStream: true,

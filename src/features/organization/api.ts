@@ -1,5 +1,6 @@
+import { cache } from '@solidjs/router';
 import { z } from 'zod';
-import { authenticatedGet } from '~/api';
+import { withAuth } from '~/api';
 import { zodUtils } from '~/lib/zodUtils';
 
 const rootKey = 'organizations';
@@ -11,17 +12,20 @@ const OrganizationSchema = z.object({
 });
 
 export const organizationsApi = {
-  rootKey: ['organizations'],
-  getAll: authenticatedGet(() => {
-    return Promise.resolve<z.output<typeof OrganizationSchema>[]>([
-      {
-        id: '1',
-        displayName: 'Organization 1',
-      },
-      {
-        id: '2',
-        displayName: 'Organization 2',
-      },
-    ]);
+  rootKey,
+  getAll: cache(async () => {
+    'use server';
+    return withAuth(() => {
+      return Promise.resolve<z.output<typeof OrganizationSchema>[]>([
+        {
+          id: '1',
+          displayName: 'Organization 1',
+        },
+        {
+          id: '2',
+          displayName: 'Organization 2',
+        },
+      ]);
+    });
   }, `${rootKey}/getAll`),
 };
