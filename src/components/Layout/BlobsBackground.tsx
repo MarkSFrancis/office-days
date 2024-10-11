@@ -1,4 +1,9 @@
-import { Component, ComponentProps, splitProps } from 'solid-js';
+import {
+  Component,
+  ComponentProps,
+  ParentComponent,
+  splitProps,
+} from 'solid-js';
 import { cn } from '~/lib/utils';
 
 interface BlobProps {
@@ -72,17 +77,17 @@ export type BlobColors = readonly [
   string,
 ];
 
-export interface BlobsBackgroundProps extends ComponentProps<'div'> {
+export interface BlobsBackgroundProps {
   blobColors: BlobColors;
 }
 
-export const BlobsBackground: Component<BlobsBackgroundProps> = (props) => {
-  const [local, other] = splitProps(props, ['blobColors']);
-
+export const BlobsBackground: ParentComponent<BlobsBackgroundProps> = (
+  props
+) => {
   return (
-    <div class="relative min-h-screen">
-      <BlobsSvg class="absolute" blobColors={local.blobColors} />
-      <div {...other} />
+    <div class="relative flex">
+      <BlobsSvg class="absolute" blobColors={props.blobColors} />
+      {props.children}
     </div>
   );
 };
