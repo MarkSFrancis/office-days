@@ -10,26 +10,24 @@ import { Title } from '@solidjs/meta';
 import { A, useSubmission } from '@solidjs/router';
 import { SubmitButton } from '~/components/form/SubmitButton';
 import { Form } from '~/components/form/Form';
-import { authApi, SignInSchema } from '~/features/auth/api';
+import { authApi, SignUpSchema } from '~/features/auth/api';
 import { TextField, TextFieldLabel } from '~/components/ui/text-field';
 import { FormInput } from '~/components/form/FormInput';
 
-export default function SignInPage() {
-  const signingIn = useSubmission(authApi.signIn);
+export default function SignUpPage() {
+  const signingUp = useSubmission(authApi.signUp);
 
   return (
     <div class="flex-1 mt-4">
       <Title>Sign in</Title>
-      <Form action={authApi.signIn} schema={SignInSchema}>
+      <Form action={authApi.signUp} schema={SignUpSchema}>
         <fieldset
-          disabled={signingIn.pending}
+          disabled={signingUp.pending}
           class="flex justify-center items-center"
         >
           <Card class="mx-auto max-w-sm md:max-w-lg w-full">
             <CardHeader class="md:px-16 md:pt-8">
-              <CardTitle class="text-2xl font-light">
-                Sign in to your account
-              </CardTitle>
+              <CardTitle class="text-2xl font-light">Sign up</CardTitle>
             </CardHeader>
             <CardContent class="md:px-16">
               <div class="grid gap-4">
@@ -43,17 +41,7 @@ export default function SignInPage() {
                   />
                 </TextField>
                 <TextField name="password">
-                  <div class="flex items-center">
-                    <TextFieldLabel>Password</TextFieldLabel>
-                    <Button
-                      as={A}
-                      variant="link"
-                      class="ml-auto h-auto text-sm"
-                      href="/auth/reset-password"
-                    >
-                      Forgot your password?
-                    </Button>
-                  </div>
+                  <TextFieldLabel>Password</TextFieldLabel>
                   <FormInput
                     name="password"
                     type="password"
@@ -61,15 +49,15 @@ export default function SignInPage() {
                   />
                 </TextField>
                 <SubmitButton type="submit" class="w-full">
-                  Login
+                  Sign up
                 </SubmitButton>
               </div>
             </CardContent>
             <CardFooter class="bg-muted md:px-16 py-4 text-sm justify-center">
               <div class="text-center">
-                New to office days?{' '}
-                <Button as={A} href="/auth/sign-up" variant="link">
-                  Sign up
+                Already have an account?{' '}
+                <Button as={A} href="/auth/sign-in" variant="link">
+                  Sign in
                 </Button>
               </div>
             </CardFooter>

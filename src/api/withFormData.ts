@@ -1,20 +1,6 @@
 import { parseWithZod } from '@conform-to/zod';
 import { z, ZodTypeAny } from 'zod';
 import { SubmissionResult } from '@conform-to/dom';
-import { User } from '@supabase/supabase-js';
-import { supabaseClient } from './supabase/supabaseClient';
-
-// TODO: make it run on the server instead + provide async context propagation for who the current user is
-export const withAuth = async <TResponse = unknown>(
-  next: (user: User) => Promise<TResponse>
-): Promise<TResponse> => {
-  const usr = await supabaseClient.auth.getUser();
-  if (usr.error) {
-    throw new Error(usr.error.message);
-  }
-
-  return next(usr.data.user);
-};
 
 export type RequestWithBodyEvent<TBody> = Omit<Request, 'body'> & {
   body: TBody;

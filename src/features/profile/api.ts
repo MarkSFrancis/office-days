@@ -2,10 +2,11 @@ import { zodUtils } from '~/lib/zodUtils';
 import { z } from 'zod';
 import { supabaseClient } from '~/supabase/supabaseClient';
 import { useUser } from '../auth/hooks';
-import { withAuth, withFormData } from '../../api';
 import { authApi } from '../auth/api';
 import { createEffect, createResource } from 'solid-js';
 import { action, cache, reload } from '@solidjs/router';
+import { withAuth } from '~/api/withAuth';
+import { withFormData } from '~/api/withFormData';
 
 export const ProfileSchema = z.object({
   firstName: zodUtils.optional(zodUtils.string()),
@@ -38,14 +39,9 @@ export const profileApi = {
   }, `${rootKey}/getProfile`),
   updateProfile: action((data: FormData) => {
     'use server';
-    return withAuth(() =>
+    return withAuth(({ supabase, user }) =>
       withFormData(ProfileSchema, data, async (data) => {
-        const user = await authApi.getUser();
-        if (!user) {
-          throw new Error('User is not logged in');
-        }
-
-        const { error } = await supabaseClient.from('profile').upsert({
+        const { error } = await supabase.from('profile').upsert({
           user_id: user.id,
           ...data,
         });

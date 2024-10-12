@@ -13,9 +13,14 @@ export const NavAuth: Component = () => {
       <Show
         when={user()}
         fallback={
-          <Button as={A} href="/auth/sign-in">
-            Sign in
-          </Button>
+          <div class="flex gap-2">
+            <Button as={A} href="/auth/sign-in" variant="outline">
+              Sign in
+            </Button>
+            <Button as={A} href="/auth/sign-up">
+              Sign up
+            </Button>
+          </div>
         }
       >
         <LogoutButton />

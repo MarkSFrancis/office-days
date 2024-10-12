@@ -1,6 +1,6 @@
 import { cache } from '@solidjs/router';
 import { z } from 'zod';
-import { withAuth } from '~/api';
+import { withAuth } from '~/api/withAuth';
 import { zodUtils } from '~/lib/zodUtils';
 
 const rootKey = 'office';
