@@ -55,3 +55,15 @@ Sometimes the workers runtime hard-crashes and fails to shutdown properly. When 
 sudo lsof -i :8787
 sudo kill PID # Replace PID with the process ID output from the above command
 ```
+
+# Invitation flow
+
+1. User signs up
+1. When they sign up, they're asked to create an office
+   1. They can create an office
+   1. They can join an existing office
+      1. They're asked for the office link, which they can get from the person who created the office
+1. User can invite other users to an office they're in via a link
+   1. If the user who clicks the link isn't signed in
+      1. They're asked to sign up / sign in
+   1. The link will add the user to the office without needing to accept an invitation

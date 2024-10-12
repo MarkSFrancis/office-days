@@ -13,11 +13,11 @@ import LogOut from 'lucide-solid/icons/log-out';
 import { Component, For } from 'solid-js';
 import { A, createAsync, useSubmission } from '@solidjs/router';
 import { authApi } from '../auth/api';
-import { organizationsApi } from '../organization/api';
+import { officeApi } from '../office/api';
 
 export const NavAvatar: Component = () => {
   const signingOut = useSubmission(authApi.signOut);
-  const tenants = createAsync(() => organizationsApi.getAll());
+  const tenants = createAsync(() => officeApi.getAll());
 
   return (
     <DropdownMenu>

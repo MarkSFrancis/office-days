@@ -52,7 +52,7 @@ export const profiles = pgTable('profiles', {
   avatarUrl: text('avatar_url'),
 });
 
-export const organizations = pgTable('organizations', {
+export const offices = pgTable('offices', {
   /**
    * Stored as a base64 URL encoded UUID v4
    */
@@ -63,13 +63,13 @@ export const organizations = pgTable('organizations', {
 
 export const rolesEnum = pgEnum('roles', ['OWNER', 'ADMIN', 'MEMBER']);
 
-export const organizationUsers = pgTable(
-  'organization_users',
+export const officeUsers = pgTable(
+  'office_users',
   {
     id: serial('id').primaryKey(),
-    organizationId: text('organization_id')
+    officeId: text('office_id')
       .notNull()
-      .references(() => organizations.id, {
+      .references(() => offices.id, {
         onUpdate: 'cascade',
         onDelete: 'cascade',
       }),
@@ -87,12 +87,12 @@ export const organizationUsers = pgTable(
     }),
   },
   (table) => ({
-    organizationUserUnique: uniqueIndex('organization_users_unique').on(
+    officeUserUnique: uniqueIndex('office_users_unique').on(
       table.userId,
-      table.organizationId
+      table.officeId
     ),
-    oneOwnerPerOrganization: uniqueIndex('one_owner_per_organization')
-      .on(table.organizationId)
+    oneOwnerPerOffice: uniqueIndex('one_owner_per_office')
+      .on(table.officeId)
       .where(eq(table.role, sql`'OWNER'`)),
   })
 );
