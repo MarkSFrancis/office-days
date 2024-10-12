@@ -14,7 +14,6 @@ export const withFormData = async <
   formData: FormData,
   next: (data: z.output<TRequestSchema>) => Promise<TResponse>
 ): Promise<TResponse | SubmissionResult> => {
-  'use server';
   const validation = parseWithZod(formData, { schema });
 
   if (validation.status !== 'success') {

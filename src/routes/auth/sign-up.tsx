@@ -6,20 +6,20 @@ import {
   CardHeader,
   CardTitle,
 } from '~/components/ui/card';
-import { Title } from '@solidjs/meta';
 import { A, useSubmission } from '@solidjs/router';
 import { SubmitButton } from '~/components/form/SubmitButton';
 import { Form } from '~/components/form/Form';
 import { authApi, SignUpSchema } from '~/features/auth/api';
 import { TextField, TextFieldLabel } from '~/components/ui/text-field';
 import { FormInput } from '~/components/form/FormInput';
+import { AppTitle } from '~/components/AppTitle';
 
 export default function SignUpPage() {
   const signingUp = useSubmission(authApi.signUp);
 
   return (
     <div class="flex-1 mt-4">
-      <Title>Sign in</Title>
+      <AppTitle>Sign up</AppTitle>
       <Form action={authApi.signUp} schema={SignUpSchema}>
         <fieldset
           disabled={signingUp.pending}
@@ -45,7 +45,7 @@ export default function SignUpPage() {
                   <FormInput
                     name="password"
                     type="password"
-                    autocomplete="current-password"
+                    autocomplete="new-password"
                   />
                 </TextField>
                 <SubmitButton type="submit" class="w-full">

@@ -220,7 +220,7 @@ export function createForm<TSchema extends FormSchema = FormSchema>(args: {
   const formProps = createMemo(() => {
     return {
       method: 'post',
-      action: args.action,
+      action: args.action.url,
       ref: formSubmit,
     } satisfies ComponentProps<'form'>;
   });

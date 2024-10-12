@@ -6,20 +6,20 @@ import {
   CardHeader,
   CardTitle,
 } from '~/components/ui/card';
-import { Title } from '@solidjs/meta';
 import { A, useSubmission } from '@solidjs/router';
 import { SubmitButton } from '~/components/form/SubmitButton';
 import { Form } from '~/components/form/Form';
 import { authApi, SignInSchema } from '~/features/auth/api';
 import { TextField, TextFieldLabel } from '~/components/ui/text-field';
 import { FormInput } from '~/components/form/FormInput';
+import { AppTitle } from '~/components/AppTitle';
 
 export default function SignInPage() {
   const signingIn = useSubmission(authApi.signIn);
 
   return (
     <div class="flex-1 mt-4">
-      <Title>Sign in</Title>
+      <AppTitle>Sign in</AppTitle>
       <Form action={authApi.signIn} schema={SignInSchema}>
         <fieldset
           disabled={signingIn.pending}

@@ -6,7 +6,9 @@ import { Form } from '~/components/form/Form';
 import { authApi } from './api';
 
 export const NavAuth: Component = () => {
-  const user = createAsync(() => authApi.getUser());
+  const user = createAsync(() => authApi.getUser(), {
+    deferStream: true,
+  });
 
   return (
     <Suspense>

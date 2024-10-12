@@ -1,6 +1,6 @@
 import { cache } from '@solidjs/router';
 import { z } from 'zod';
-import { withAuth } from '~/api/withAuth';
+import { getSsrUser } from '~/api/ssrUser';
 import { zodUtils } from '~/lib/zodUtils';
 
 const rootKey = 'office';
@@ -15,17 +15,17 @@ export const officeApi = {
   rootKey,
   getAll: cache(async () => {
     'use server';
-    return withAuth(() => {
-      return Promise.resolve<z.output<typeof OfficeSchema>[]>([
-        {
-          id: '1',
-          displayName: 'Office 1',
-        },
-        {
-          id: '2',
-          displayName: 'Office 2',
-        },
-      ]);
-    });
+
+    await getSsrUser();
+    return Promise.resolve<z.output<typeof OfficeSchema>[]>([
+      {
+        id: '1',
+        displayName: 'Office 1',
+      },
+      {
+        id: '2',
+        displayName: 'Office 2',
+      },
+    ]);
   }, `${rootKey}/getAll`),
 };

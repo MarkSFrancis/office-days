@@ -2,16 +2,17 @@ import { Router, useIsRouting } from '@solidjs/router';
 import { FileRoutes } from '@solidjs/start/router';
 import { Suspense } from 'solid-js';
 import './app.css';
-import { MetaProvider, Title } from '@solidjs/meta';
+import { MetaProvider } from '@solidjs/meta';
 import { NavAuth } from './features/auth/NavAuth';
 import { cn } from './lib/utils';
 import { Toaster } from './components/ui/toast';
 import { AppBackground } from './components/Layout/AppBackground';
+import { AppTitle } from './components/AppTitle';
 
 export default function App() {
   return (
     <MetaProvider>
-      <Title>Office Days</Title>
+      <AppTitle />
       <Router
         root={(props) => {
           const navigating = useIsRouting();

@@ -1,12 +1,13 @@
 import { zodUtils } from '~/lib/zodUtils';
 import { z } from 'zod';
-import { supabaseClient } from '~/supabase/supabaseClient';
+import { supabaseBrowserClient } from '~/supabase/supabaseClient';
 import { useUser } from '../auth/hooks';
 import { authApi } from '../auth/api';
 import { createEffect, createResource } from 'solid-js';
 import { action, cache, reload } from '@solidjs/router';
-import { withAuth } from '~/api/withAuth';
 import { withFormData } from '~/api/withFormData';
+import { getSsrUser } from '~/api/ssrUser';
+import { getSupabaseClient } from '~/supabase/supabase';
 
 export const ProfileSchema = z.object({
   firstName: zodUtils.optional(zodUtils.string()),
@@ -25,7 +26,7 @@ export const profileApi = {
       throw new Error('User is not logged in');
     }
 
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabaseBrowserClient
       .from('profile')
       .select('first_name, last_name, avatar_url')
       .eq('id', user.id)
@@ -37,24 +38,25 @@ export const profileApi = {
 
     return data as z.output<typeof ProfileSchema>;
   }, `${rootKey}/getProfile`),
-  updateProfile: action((data: FormData) => {
+  updateProfile: action(async (data: FormData) => {
     'use server';
-    return withAuth(({ supabase, user }) =>
-      withFormData(ProfileSchema, data, async (data) => {
-        const { error } = await supabase.from('profile').upsert({
+    const user = await getSsrUser();
+    return withFormData(ProfileSchema, data, async (data) => {
+      const { error } = await getSupabaseClient()
+        .from('profile')
+        .upsert({
           user_id: user.id,
           ...data,
         });
 
-        if (error) {
-          throw error;
-        }
+      if (error) {
+        throw error;
+      }
 
-        throw reload({
-          revalidate: profileApi.getProfile.key,
-        });
-      })
-    );
+      throw reload({
+        revalidate: profileApi.getProfile.key,
+      });
+    });
   }, `${rootKey}/updateProfile`),
 };
 
@@ -67,7 +69,7 @@ export const useProfile = () => {
       return undefined;
     }
 
-    const subscription = supabaseClient.channel('table-').on(
+    const subscription = supabaseBrowserClient.channel('table-').on(
       'postgres_changes',
       {
         event: '*',

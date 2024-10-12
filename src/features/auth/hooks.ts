@@ -1,5 +1,5 @@
 import { authApi } from './api';
-import { supabaseClient } from '~/supabase/supabaseClient';
+import { supabaseBrowserClient } from '~/supabase/supabaseClient';
 import { User } from '@supabase/supabase-js';
 import { createStore } from 'solid-js/store';
 
@@ -19,7 +19,7 @@ const [store, setStore] = createStore<AuthState>({
 
 export const useUserState = store;
 
-supabaseClient.auth.onAuthStateChange((_event, session) => {
+supabaseBrowserClient.auth.onAuthStateChange((_event, session) => {
   setStore({
     isPending: false,
     user: session?.user,
@@ -29,6 +29,6 @@ supabaseClient.auth.onAuthStateChange((_event, session) => {
 /**
  * Gets the currently logged in user, or `undefined` if they're not logged in
  */
-export const getCurrentUserAsync = () => authApi.getUser();
+export const getCurrentUserAsync = authApi.getUser;
 
 export const useUser = () => store.user;
