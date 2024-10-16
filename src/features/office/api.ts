@@ -11,13 +11,18 @@ const OfficeSchema = z.object({
   displayName: zodUtils.string(),
 });
 
+export interface Office {
+  id: string;
+  displayName: string;
+}
+
 export const officeApi = {
   rootKey,
   getAll: cache(async () => {
     'use server';
 
     await getSsrUser();
-    return Promise.resolve<z.output<typeof OfficeSchema>[]>([
+    return Promise.resolve<Office[]>([
       {
         id: '1',
         displayName: 'Office 1',

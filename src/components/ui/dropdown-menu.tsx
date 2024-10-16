@@ -5,6 +5,7 @@ import * as DropdownMenuPrimitive from '@kobalte/core/dropdown-menu';
 import type { PolymorphicProps } from '@kobalte/core/polymorphic';
 
 import { cn } from '~/lib/utils';
+import ChevronDownIcon from 'lucide-solid/icons/chevron-down';
 
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
 const DropdownMenuPortal = DropdownMenuPrimitive.Portal;
@@ -23,6 +24,14 @@ type DropdownMenuContentProps<T extends ValidComponent = 'div'> =
     class?: string | undefined;
   };
 
+const DropdownMenuIcon: Component<ComponentProps<'svg'>> = (props) => {
+  return (
+    <DropdownMenuPrimitive.Icon class="data-[expanded]:rotate-180 transition-transform duration-1000">
+      <ChevronDownIcon {...props} />
+    </DropdownMenuPrimitive.Icon>
+  );
+};
+
 const DropdownMenuContent = <T extends ValidComponent = 'div'>(
   props: PolymorphicProps<T, DropdownMenuContentProps<T>>
 ) => {
@@ -31,7 +40,7 @@ const DropdownMenuContent = <T extends ValidComponent = 'div'>(
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
         class={cn(
-          'z-50 min-w-32 origin-[var(--kb-menu-content-transform-origin)] animate-content-hide overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[expanded]:animate-content-show',
+          'z-50 min-w-32 origin-[var(--kb-menu-content-transform-origin)] animate-content-hide overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[expanded]:animate-content-show outline-none',
           props.class
         )}
         {...rest}
@@ -265,6 +274,7 @@ const DropdownMenuRadioItem = <T extends ValidComponent = 'div'>(
 export {
   DropdownMenu,
   DropdownMenuTrigger,
+  DropdownMenuIcon,
   DropdownMenuPortal,
   DropdownMenuContent,
   DropdownMenuItem,

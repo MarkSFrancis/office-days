@@ -23,10 +23,24 @@ export const createSupabaseServerClient = () => {
               sameSite = options.sameSite;
             }
 
-            setCookie(name, value, {
-              ...options,
-              sameSite,
-            });
+            try {
+              // Operation will fail if the web request has already started to be processed
+              setCookie(name, value, {
+                ...options,
+                sameSite,
+              });
+            } catch (err) {
+              if (err instanceof Error && 'code' in err) {
+                if (err.code === 'ERR_HTTP_HEADERS_SENT') {
+                  console.info(
+                    'Failed to set cookie because the headers have already been sent'
+                  );
+                  return;
+                }
+              } else {
+                console.error('Error setting cookie', err);
+              }
+            }
           }),
       },
     }

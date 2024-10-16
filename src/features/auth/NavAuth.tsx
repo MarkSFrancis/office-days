@@ -1,19 +1,21 @@
 import { A, createAsync } from '@solidjs/router';
-import { SubmitButton } from '~/components/form/SubmitButton';
 import { Component, Show, Suspense } from 'solid-js';
 import { Button } from '~/components/ui/button';
-import { Form } from '~/components/form/Form';
-import { authApi } from './api';
+import { NavAvatar } from '../nav/NavAvatar';
+import { profileApi } from '../profile/api';
+import { User } from '@supabase/supabase-js';
 
-export const NavAuth: Component = () => {
-  const user = createAsync(() => authApi.getUser(), {
-    deferStream: true,
-  });
+export interface NavAuthProps {
+  user: () => User | undefined;
+}
+
+export const NavAuth: Component<NavAuthProps> = (props) => {
+  const profile = createAsync(() => profileApi.getProfile());
 
   return (
     <Suspense>
       <Show
-        when={user()}
+        when={props.user()}
         fallback={
           <div class="flex gap-2">
             <Button as={A} href="/auth/sign-in" variant="outline">
@@ -25,14 +27,8 @@ export const NavAuth: Component = () => {
           </div>
         }
       >
-        <LogoutButton />
+        {(user) => <NavAvatar user={user()} profile={profile} />}
       </Show>
     </Suspense>
   );
 };
-
-const LogoutButton: Component = () => (
-  <Form action={authApi.signOut}>
-    <SubmitButton variant="secondary">Logout</SubmitButton>
-  </Form>
-);

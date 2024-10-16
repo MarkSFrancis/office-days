@@ -12,7 +12,6 @@ import {
 } from '~/components/ui/card';
 import { TextField, TextFieldLabel } from '~/components/ui/text-field';
 import { authApi, UpdatePasswordSchema } from '~/features/auth/api';
-import { getCurrentUserAsync } from '~/features/auth/hooks';
 import { getSupabaseClient } from '~/supabase/supabase';
 
 export const route = {
@@ -51,7 +50,7 @@ export const route = {
       }
     }
 
-    const user = await getCurrentUserAsync();
+    const user = await authApi.getUser();
 
     if (!user) {
       throw redirect('/auth/sign-in');

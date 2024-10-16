@@ -1,13 +1,11 @@
 import { zodUtils } from '~/lib/zodUtils';
 import { z } from 'zod';
-import { supabaseBrowserClient } from '~/supabase/supabaseClient';
-import { useUser } from '../auth/hooks';
 import { authApi } from '../auth/api';
-import { createEffect, createResource } from 'solid-js';
 import { action, cache, reload } from '@solidjs/router';
 import { withFormData } from '~/api/withFormData';
 import { getSsrUser } from '~/api/ssrUser';
 import { getSupabaseClient } from '~/supabase/supabase';
+import { Duration, waitFor } from '~/lib/utils';
 
 export const ProfileSchema = z.object({
   firstName: zodUtils.optional(zodUtils.string()),
@@ -15,35 +13,58 @@ export const ProfileSchema = z.object({
   avatarUrl: zodUtils.optional(zodUtils.string().url()),
 });
 
+export type Profile = {
+  firstName?: string;
+  lastName?: string;
+  avatarUrl?: string;
+};
+
 const rootKey = 'profile';
 
 export const profileApi = {
   rootKey,
-  getProfile: cache(async () => {
+  getProfile: cache(async (): Promise<Profile | undefined> => {
     'use server';
+    await waitFor(Duration.milliseconds(1_000));
     const user = await authApi.getUser();
     if (!user) {
-      throw new Error('User is not logged in');
+      return undefined;
     }
 
-    const { data, error } = await supabaseBrowserClient
-      .from('profile')
+    console.log('Getting profile for user', user.id);
+    const { data, error } = await getSupabaseClient()
+      .from('profiles')
       .select('first_name, last_name, avatar_url')
-      .eq('id', user.id)
-      .single();
+      .eq('user_id', user.id)
+      .maybeSingle();
 
     if (error) {
       throw error;
     }
 
-    return data as z.output<typeof ProfileSchema>;
+    if (!data) {
+      return {};
+    }
+
+    return {
+      firstName:
+        typeof data.first_name === 'string'
+          ? String(data.first_name)
+          : undefined,
+      lastName:
+        typeof data.last_name === 'string' ? String(data.last_name) : undefined,
+      avatarUrl:
+        typeof data.avatar_url === 'string'
+          ? String(data.avatar_url)
+          : undefined,
+    };
   }, `${rootKey}/getProfile`),
   updateProfile: action(async (data: FormData) => {
     'use server';
     const user = await getSsrUser();
     return withFormData(ProfileSchema, data, async (data) => {
       const { error } = await getSupabaseClient()
-        .from('profile')
+        .from('profiles')
         .upsert({
           user_id: user.id,
           ...data,
@@ -58,40 +79,4 @@ export const profileApi = {
       });
     });
   }, `${rootKey}/updateProfile`),
-};
-
-export const useProfile = () => {
-  const [profile, { mutate }] = createResource(() => profileApi.getProfile());
-  const user = useUser();
-
-  createEffect(() => {
-    if (!user) {
-      return undefined;
-    }
-
-    const subscription = supabaseBrowserClient.channel('table-').on(
-      'postgres_changes',
-      {
-        event: '*',
-        schema: 'public',
-        table: 'profile',
-        filter: `id=eq.${user.id}`,
-      },
-      (payload) =>
-        mutate(() => {
-          switch (payload.eventType) {
-            case 'INSERT':
-              return payload.new;
-            case 'UPDATE':
-              return payload.new;
-            case 'DELETE':
-              return undefined;
-          }
-        })
-    );
-
-    return () => void subscription.unsubscribe();
-  });
-
-  return profile;
 };

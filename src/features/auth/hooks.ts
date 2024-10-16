@@ -1,34 +1,43 @@
-import { authApi } from './api';
 import { supabaseBrowserClient } from '~/supabase/supabaseClient';
-import { User } from '@supabase/supabase-js';
-import { createStore } from 'solid-js/store';
+import { Subscription, User } from '@supabase/supabase-js';
+import { createMemo, createSignal, onCleanup, onMount } from 'solid-js';
+import { authApi } from './api';
+import { createAsync } from '@solidjs/router';
 
-export type AuthState =
-  | {
-      user?: undefined;
-      isPending: true;
-    }
-  | {
-      user: User | undefined;
-      isPending: false;
-    };
-
-const [store, setStore] = createStore<AuthState>({
-  isPending: true,
-});
-
-export const useUserState = store;
-
-supabaseBrowserClient.auth.onAuthStateChange((_event, session) => {
-  setStore({
-    isPending: false,
-    user: session?.user,
+export const createUserSubscription = (options?: { deferStream?: boolean }) => {
+  const apiUser = createAsync(() => authApi.getUser(), options);
+  const [subscriptionUser, setSubscriptionUser] = createSignal<{
+    isFetched: boolean;
+    user: User | undefined;
+  }>({
+    isFetched: false,
+    user: undefined,
   });
-});
 
-/**
- * Gets the currently logged in user, or `undefined` if they're not logged in
- */
-export const getCurrentUserAsync = authApi.getUser;
+  let subscription: Subscription | undefined;
+  onMount(() => {
+    const handler = supabaseBrowserClient.auth.onAuthStateChange(
+      (_event, session) => {
+        console.log('Auth state changed');
+        setSubscriptionUser({
+          isFetched: true,
+          user: session?.user ?? undefined,
+        });
+      }
+    );
 
-export const useUser = () => store.user;
+    subscription = handler.data.subscription;
+  });
+
+  onCleanup(() => {
+    subscription?.unsubscribe();
+  });
+
+  return createMemo(() => {
+    const user = subscriptionUser().isFetched
+      ? subscriptionUser().user
+      : apiUser();
+
+    return user;
+  });
+};

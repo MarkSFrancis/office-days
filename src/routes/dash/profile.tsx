@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from '~/components/ui/card';
 import { TextField, TextFieldLabel } from '~/components/ui/text-field';
-import { useUser } from '~/features/auth/hooks';
+import { createUserSubscription } from '~/features/auth/hooks';
 import { profileApi, ProfileSchema } from '~/features/profile/api';
 
 export const route = {
@@ -20,7 +20,9 @@ export const route = {
 } satisfies RouteDefinition;
 
 export default function ProfilePage() {
-  const user = useUser();
+  const user = createUserSubscription({
+    deferStream: true,
+  });
   const profile = createAsync(() => profileApi.getProfile(), {
     deferStream: true,
   });
@@ -48,7 +50,7 @@ export default function ProfilePage() {
                 <FormInput
                   type="email"
                   name="email"
-                  value={user?.email}
+                  value={user()?.email}
                   disabled
                 />
               </TextField>

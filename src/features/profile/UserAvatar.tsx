@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
+import { Component, createMemo, Show } from 'solid-js';
 import CircleUser from 'lucide-solid/icons/circle-user';
-import { Component, createMemo } from 'solid-js';
 
 export const UserAvatar: Component<{
   avatarUrl?: string;
@@ -8,7 +8,7 @@ export const UserAvatar: Component<{
   lastName?: string;
   email?: string;
 }> = (props) => {
-  const fallbackAvatar = createMemo(() => {
+  const avatarTextFallback = createMemo(() => {
     let avatarText = '';
 
     if (props.firstName) {
@@ -23,13 +23,27 @@ export const UserAvatar: Component<{
       avatarText = props.email.substring(0, 1);
     }
 
-    return avatarText.toLocaleUpperCase();
-  }, [props]);
+    if (avatarText.length) {
+      return avatarText.toLocaleUpperCase();
+    } else {
+      return null;
+    }
+  });
 
   return (
     <Avatar class="bg-secondary text-secondary-foreground">
-      {!!props.avatarUrl && <AvatarImage src={props.avatarUrl} />}
-      <AvatarFallback>{fallbackAvatar() || <CircleUser />}</AvatarFallback>
+      <Show
+        when={props.avatarUrl}
+        fallback={
+          <AvatarFallback>
+            <Show when={avatarTextFallback()} fallback={<CircleUser />}>
+              {(text) => text()}
+            </Show>
+          </AvatarFallback>
+        }
+      >
+        <AvatarImage src={props.avatarUrl} />
+      </Show>
     </Avatar>
   );
 };

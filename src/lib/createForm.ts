@@ -121,9 +121,8 @@ export function createForm<TSchema extends FormSchema = FormSchema>(args: {
       if (reply?.status === 'error') {
         e.preventDefault();
 
-        for (const k in fields) {
-          const field = fields[k];
-          if (reply.error?.[k]) {
+        for (const [name, field] of Object.entries(fields)) {
+          if (reply.error?.[name]) {
             field.ref.focus();
             break;
           }
