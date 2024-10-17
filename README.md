@@ -8,18 +8,25 @@ Track which days your teasm are in the office, so you can be in on the same day!
 
 - Git
 - NodeJS
+- A supabase project URL
+- A supabase project public key
 - A supabase connection string
+- A supabase secret key
 
 ## Steps
 
 1. Clone the project onto your local machine
 1. Open a shell at the root of the project and run `npm i`
 1. Run `npm test` to run all unit tests
-1. Set `SUPABASE_DB_CONNECTION_STRING` in [`.env.local`](./.env.local) to the supabase connection string you got earlier
+1. Set `VITE_SUPABASE_URL` in [`.env`](./.env) to the supabase project URL you got earlier
+1. Set `VITE_SUPABASE_KEY` in [`.env`](./.env) to the supabase project **public** key you got earlier
+1. Set `SUPABASE_DB_CONNECTION_STRING` in the same file to the supabase connection string you got earlier
 1. Set `DRIZZLE_KIT_CONNECTION_STRING` in the same file to the same string, but set the port number to `5432`
 
    ```sh
-   # .env.local
+   # .env
+   VITE_SUPABASE_URL=https://[YOUR_PROJECT_ID].supabase.co
+   VITE_SUPABASE_KEY=[YOUR_PUBLIC_KEY]
    SUPABASE_DB_CONNECTION_STRING="postgresql://[YOUR_DATABASE_USER]:[YOUR_PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
    DRIZZLE_KIT_CONNECTION_STRING="postgresql://[YOUR_DATABASE_USER]:[YOUR_PASSWORD]@aws-0-us-east-1.pooler.supabase.com:5432/postgres"
    ```
