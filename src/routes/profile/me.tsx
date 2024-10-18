@@ -9,13 +9,18 @@ import {
   CardHeader,
   CardTitle,
 } from '~/components/ui/card';
-import { TextField, TextFieldLabel } from '~/components/ui/text-field';
+import {
+  TextField,
+  TextFieldInput,
+  TextFieldLabel,
+} from '~/components/ui/text-field';
+import { authApi } from '~/features/auth/api';
 import { createUserSubscription } from '~/features/auth/hooks';
 import { profileApi, ProfileSchema } from '~/features/profile/api';
 
 export const route = {
   preload: async () => {
-    await profileApi.getProfile();
+    await Promise.all([profileApi.getProfile(), authApi.getUser()]);
   },
 } satisfies RouteDefinition;
 
@@ -30,6 +35,7 @@ export default function ProfilePage() {
 
   return (
     <Form
+      class="w-full"
       action={profileApi.updateProfile}
       schema={ProfileSchema}
       initialValues={profile()}
@@ -38,7 +44,7 @@ export default function ProfilePage() {
         disabled={updatingProfile.pending}
         class="flex justify-center items-center"
       >
-        <Card class="max-w-sm md:max-w-lg w-full">
+        <Card class="mx-auto mt-4 max-w-sm md:max-w-lg w-full">
           <CardHeader class="md:px-16 md:pt-8">
             <CardTitle class="text-2xl font-light">My profile</CardTitle>
             <CardDescription>Make changes to your profile here</CardDescription>
@@ -47,7 +53,7 @@ export default function ProfilePage() {
             <div class="grid gap-4">
               <TextField name="email">
                 <TextFieldLabel>Email</TextFieldLabel>
-                <FormInput
+                <TextFieldInput
                   type="email"
                   name="email"
                   value={user()?.email}

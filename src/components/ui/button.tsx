@@ -1,5 +1,5 @@
 import type { JSX, ValidComponent } from 'solid-js';
-import { splitProps } from 'solid-js';
+import { createMemo, Show, splitProps } from 'solid-js';
 
 import * as ButtonPrimitive from '@kobalte/core/button';
 import type { PolymorphicProps } from '@kobalte/core/polymorphic';
@@ -57,19 +57,6 @@ const Button = <T extends ValidComponent = 'button'>(
     'children',
   ]);
 
-  const children = () => {
-    if (local.isPending) {
-      return (
-        <>
-          <Loading class="mr-2" />
-          {local.children}
-        </>
-      );
-    } else {
-      return local.children;
-    }
-  };
-
   return (
     <ButtonPrimitive.Root
       class={cn(
@@ -78,7 +65,10 @@ const Button = <T extends ValidComponent = 'button'>(
       )}
       {...others}
     >
-      {children()}
+      <Show when={local.isPending}>
+        <Loading class="mr-2" />
+      </Show>
+      {local.children}
     </ButtonPrimitive.Root>
   );
 };

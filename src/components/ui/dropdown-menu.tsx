@@ -26,7 +26,7 @@ type DropdownMenuContentProps<T extends ValidComponent = 'div'> =
 
 const DropdownMenuIcon: Component<ComponentProps<'svg'>> = (props) => {
   return (
-    <DropdownMenuPrimitive.Icon class="data-[expanded]:rotate-180 transition-transform duration-1000">
+    <DropdownMenuPrimitive.Icon class="data-[expanded]:rotate-180 transition-transform">
       <ChevronDownIcon {...props} />
     </DropdownMenuPrimitive.Icon>
   );

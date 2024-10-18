@@ -6,53 +6,30 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
-import { Loading } from '~/components/Loading';
 import Plus from 'lucide-solid/icons/plus';
-import {
-  Component,
-  createEffect,
-  createSignal,
-  For,
-  Show,
-  Suspense,
-} from 'solid-js';
-import { A } from '@solidjs/router';
+import { Component, createMemo, For, Show, Suspense } from 'solid-js';
+import { A, useParams } from '@solidjs/router';
 import { Office } from './api';
-import { cn } from '~/lib/utils';
 
 export interface OfficeSelectorProps {
   offices: Office[];
 }
 
-// TODO: convert from Dropdown to Navigation Menu
-
 export const OfficeSelector: Component<OfficeSelectorProps> = (props) => {
-  // TODO: get active office from URL
-  // TODO: get last active office from API
-  const [activeOffice, setActiveOffice] = createSignal<Office | undefined>(
-    props.offices[0]
-  );
+  const params = useParams<{ officeId?: string }>();
 
-  createEffect(() => {
-    const selectedOffice = activeOffice();
-    const defaultOffice = props.offices[0];
+  const activeOffice = createMemo(() => {
+    const defaultOffice = props.offices.find((o) => o.id === params.officeId);
 
-    if (!selectedOffice && defaultOffice) {
-      setActiveOffice(defaultOffice);
-    }
+    return defaultOffice;
   });
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger<typeof Button>
-        variant="ghost"
-        as={(props) => <Button {...props} class={cn(props.class, '')} />}
-      >
-        <Suspense fallback={<Loading class="inline-block" />}>
-          <Show when={activeOffice()} fallback="Select an office">
-            {(office) => office().displayName}
-          </Show>
-        </Suspense>
+      <DropdownMenuTrigger<typeof Button> variant="ghost" as={Button}>
+        <Show when={activeOffice()} fallback={<span>Select an office</span>}>
+          {(office) => <span>{office().displayName}</span>}
+        </Show>
         <DropdownMenuIcon />
         <span class="sr-only">Toggle offices menu</span>
       </DropdownMenuTrigger>

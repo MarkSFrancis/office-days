@@ -1,4 +1,4 @@
-import { Router } from '@solidjs/router';
+import { Router, useParams } from '@solidjs/router';
 import { FileRoutes } from '@solidjs/start/router';
 import { Suspense } from 'solid-js';
 import './app.css';
@@ -14,11 +14,13 @@ export default function App() {
       <AppTitle />
       <Router
         root={(props) => {
+          const params = useParams<{ officeId?: string }>();
+
           return (
             <Suspense>
               <div class="grid min-h-screen grid-rows-[auto,_minmax(0,_1fr)]">
                 <Navbar />
-                <AppBackground>
+                <AppBackground colorsSeed={params.officeId}>
                   <Suspense>{props.children}</Suspense>
                 </AppBackground>
               </div>

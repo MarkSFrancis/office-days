@@ -4,11 +4,12 @@ import {
   parseCookieHeader,
 } from '@supabase/ssr';
 import { getWebRequest, setCookie } from 'vinxi/server';
+import { Database } from '~/db/supabase-types';
 
 export const createSupabaseServerClient = () => {
   const cookie = parseCookieHeader(getWebRequest().headers.get('Cookie') ?? '');
 
-  return createServerClient(
+  return createServerClient<Database>(
     import.meta.env.VITE_SUPABASE_URL,
     import.meta.env.VITE_SUPABASE_KEY,
     {

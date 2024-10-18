@@ -1,11 +1,11 @@
-import { supabaseBrowserClient } from '~/supabase/supabaseClient';
 import { Subscription, User } from '@supabase/supabase-js';
 import { createMemo, createSignal, onCleanup, onMount } from 'solid-js';
 import { authApi } from './api';
 import { createAsync } from '@solidjs/router';
+import { getSupabaseClient } from '~/supabase/supabase';
 
 export const createUserSubscription = (options?: { deferStream?: boolean }) => {
-  const apiUser = createAsync(() => authApi.getUser(), options);
+  const apiUser = createAsync(() => authApi.tryGetUser(), options);
   const [subscriptionUser, setSubscriptionUser] = createSignal<{
     isFetched: boolean;
     user: User | undefined;
@@ -16,7 +16,7 @@ export const createUserSubscription = (options?: { deferStream?: boolean }) => {
 
   let subscription: Subscription | undefined;
   onMount(() => {
-    const handler = supabaseBrowserClient.auth.onAuthStateChange(
+    const handler = getSupabaseClient().auth.onAuthStateChange(
       (_event, session) => {
         console.log('Auth state changed');
         setSubscriptionUser({

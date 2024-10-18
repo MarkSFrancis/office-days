@@ -45,7 +45,7 @@ export const NavAvatar: Component<NavAvatarProps> = (props) => {
       <DropdownMenuContent>
         <DropdownMenuItem
           class="font-bold cursor-pointer"
-          href="/dash/profile"
+          href="/profile/me"
           as={A}
         >
           My profile

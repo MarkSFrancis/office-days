@@ -13,6 +13,7 @@
     "test:setup": "npx playwright install chromium --with-deps",
     "db": "drizzle-kit --config ./scripts/drizzle-kit.config.ts",
     "db:migrate": "npx tsx ./scripts/migrate.ts",
+    "db:supabase-types": "npx supabase gen types --lang=typescript --project-id 'hlbhxwwxawelqgmgmsoa' --schema public > ./src/db/supabase-types.ts",
     "prepare": "husky"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "drizzle-kit": "^0.25.0",
     "drizzle-orm": "^0.34.1",
     "lucide-solid": "^0.451.0",
+    "luxon": "^3.5.0",
     "postgres": "^3.4.4",
     "solid-js": "^1.9.1",
     "tailwind-merge": "^2.5.3",
@@ -36,6 +38,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/luxon": "^3.4.2",
     "@vitest/browser": "^2.1.2",
     "autoprefixer": "^10.4.20",
     "babel-loader": "^9.2.1",

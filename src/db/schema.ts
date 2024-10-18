@@ -96,3 +96,22 @@ export const officeUsers = pgTable(
       .where(eq(table.role, sql`'OWNER'`)),
   })
 );
+
+export const officeAttendance = pgTable('office_user_attendance', {
+  id: serial('id').primaryKey(),
+  officeId: text('office_id')
+    .notNull()
+    .references(() => offices.id, {
+      onUpdate: 'cascade',
+      onDelete: 'cascade',
+    }),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id, {
+      onUpdate: 'cascade',
+      onDelete: 'cascade',
+    }),
+  arriveAt: timestamp('arrive_at').notNull(),
+  leaveAt: timestamp('leave_at').notNull(),
+  notes: text('notes'),
+});

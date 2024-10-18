@@ -1,4 +1,4 @@
-import { redirect, RouteDefinition, useSubmission } from '@solidjs/router';
+import { RouteDefinition, useSubmission } from '@solidjs/router';
 import { AppTitle } from '~/components/AppTitle';
 import { Form } from '~/components/form/Form';
 import { FormInput } from '~/components/form/FormInput';
@@ -50,11 +50,7 @@ export const route = {
       }
     }
 
-    const user = await authApi.getUser();
-
-    if (!user) {
-      throw redirect('/auth/sign-in');
-    }
+    await authApi.getUser();
 
     return {
       acceptedInvite: !!refreshToken,

@@ -28,11 +28,23 @@ const apiId = 'auth';
 
 export const authApi = {
   apiId,
-  getUser: cache(async () => {
+  tryGetUser: cache(async () => {
     'use server';
 
     const res = await getSupabaseClient().auth.getUser();
     const user = res.data.user ?? undefined;
+
+    return user;
+  }, `${apiId}/tryGetUser`),
+  getUser: cache(async () => {
+    'use server';
+
+    const res = await getSupabaseClient().auth.getUser();
+    const user = res.data.user;
+
+    if (!user) {
+      throw redirect('/auth/sign-in');
+    }
 
     return user;
   }, `${apiId}/getUser`),

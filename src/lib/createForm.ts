@@ -113,10 +113,9 @@ export function createForm<TSchema extends FormSchema = FormSchema>(args: {
 
     ref.onsubmit = (e) => {
       const reply = validate();
-      setFormSubmitted(true);
 
-      const formData = new FormData(form);
-      console.log({ formData: Object.fromEntries(formData.entries()) });
+      // The user has now attempted to submit a form. Setting this to `true` ensures that any validation errors will now be visible
+      setFormSubmitted(true);
 
       if (reply?.status === 'error') {
         e.preventDefault();
@@ -128,9 +127,12 @@ export function createForm<TSchema extends FormSchema = FormSchema>(args: {
           }
         }
       } else {
-        setTimeout(() => {
-          ref.reset();
-        }, 0);
+        // TODO - not really sure if this is right. Should this be something to do with `optimistic` instead?
+        if (args.allowParallelSubmit) {
+          setTimeout(() => {
+            ref.reset();
+          }, 0);
+        }
       }
     };
   };

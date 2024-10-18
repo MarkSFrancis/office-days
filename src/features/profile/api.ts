@@ -26,12 +26,11 @@ export const profileApi = {
   getProfile: cache(async (): Promise<Profile | undefined> => {
     'use server';
     await waitFor(Duration.milliseconds(1_000));
-    const user = await authApi.getUser();
+    const user = await authApi.tryGetUser();
     if (!user) {
       return undefined;
     }
 
-    console.log('Getting profile for user', user.id);
     const { data, error } = await getSupabaseClient()
       .from('profiles')
       .select('first_name, last_name, avatar_url')
@@ -47,36 +46,30 @@ export const profileApi = {
     }
 
     return {
-      firstName:
-        typeof data.first_name === 'string'
-          ? String(data.first_name)
-          : undefined,
-      lastName:
-        typeof data.last_name === 'string' ? String(data.last_name) : undefined,
-      avatarUrl:
-        typeof data.avatar_url === 'string'
-          ? String(data.avatar_url)
-          : undefined,
+      firstName: data.first_name ?? undefined,
+      lastName: data.last_name ?? undefined,
+      avatarUrl: data.avatar_url ?? undefined,
     };
   }, `${rootKey}/getProfile`),
   updateProfile: action(async (data: FormData) => {
     'use server';
     const user = await getSsrUser();
-    return withFormData(ProfileSchema, data, async (data) => {
-      const { error } = await getSupabaseClient()
+    return await withFormData(ProfileSchema, data, async (data) => {
+      await getSupabaseClient()
         .from('profiles')
-        .upsert({
-          user_id: user.id,
-          ...data,
-        });
+        .upsert(
+          {
+            avatar_url: data.avatarUrl ?? null,
+            first_name: data.firstName ?? null,
+            last_name: data.lastName ?? null,
+            user_id: user.id,
+          },
+          {
+            onConflict: 'user_id',
+          }
+        );
 
-      if (error) {
-        throw error;
-      }
-
-      throw reload({
-        revalidate: profileApi.getProfile.key,
-      });
+      throw reload();
     });
   }, `${rootKey}/updateProfile`),
 };

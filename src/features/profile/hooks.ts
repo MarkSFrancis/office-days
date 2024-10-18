@@ -1,4 +1,3 @@
-import { supabaseBrowserClient } from '~/supabase/supabaseClient';
 import {
   RealtimePostgresDeletePayload,
   RealtimePostgresInsertPayload,
@@ -10,12 +9,14 @@ import { createAsync } from '@solidjs/router';
 import { authApi } from '../auth/api';
 import { profiles } from '~/db/schema';
 import { RawSqlTable } from '~/supabase/RawSqlTable';
+import { getSupabaseClient } from '~/supabase/supabase';
+import { Tables } from '~/db/supabase-types';
 
 export const createProfileSubscription = (options?: {
   deferStream?: boolean;
 }) => {
   const apiProfile = createAsync(() => profileApi.getProfile(), options);
-  const user = createAsync(() => authApi.getUser(), options);
+  const user = createAsync(() => authApi.tryGetUser(), options);
   const [subscriptionProfile, setSubscriptionProfile] = createSignal<{
     isFetched: boolean;
     profile: Profile | undefined;
@@ -28,9 +29,9 @@ export const createProfileSubscription = (options?: {
     const userId = user()?.id;
     if (!userId) return;
 
-    const subscription = supabaseBrowserClient
-      .channel('table-')
-      .on<ProfileTable>(
+    const subscription = getSupabaseClient()
+      .channel('db-changes')
+      .on<Tables<'profiles'>>(
         'postgres_changes',
         {
           event: '*',

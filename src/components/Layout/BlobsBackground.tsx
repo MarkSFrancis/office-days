@@ -1,6 +1,7 @@
 import {
   Component,
   ComponentProps,
+  createUniqueId,
   ParentComponent,
   splitProps,
 } from 'solid-js';
@@ -21,8 +22,9 @@ interface BlobsSvgProps extends ComponentProps<'svg'> {
   blobColors: BlobColors;
 }
 
-const BlobsSvg: Component<BlobsSvgProps> = (props) => {
+export const BlobsSvg: Component<BlobsSvgProps> = (props) => {
   const [local, other] = splitProps(props, ['blobColors', 'class', 'ref']);
+  const rectId = createUniqueId();
 
   return (
     <svg
@@ -38,7 +40,7 @@ const BlobsSvg: Component<BlobsSvgProps> = (props) => {
     >
       {/** Repeats pattern vertically up to 20 times */}
       <pattern
-        id="blobs-background"
+        id={rectId}
         viewBox="0 0 528 560"
         height="2000"
         width="2000"
@@ -57,7 +59,7 @@ const BlobsSvg: Component<BlobsSvgProps> = (props) => {
         <Blob cx="560.5" cy="100" fill={local.blobColors[6]} />
       </pattern>
       <rect
-        fill="url(#blobs-background)"
+        fill={`url(#${rectId})`}
         x="0"
         y="0"
         width="10000"
@@ -77,17 +79,19 @@ export type BlobColors = readonly [
   string,
 ];
 
-export interface BlobsBackgroundProps {
+export interface BlobsBackgroundProps extends ComponentProps<'div'> {
   blobColors: BlobColors;
 }
 
 export const BlobsBackground: ParentComponent<BlobsBackgroundProps> = (
   props
 ) => {
+  const [local, other] = splitProps(props, ['blobColors', 'children']);
+
   return (
-    <div class="relative flex">
-      <BlobsSvg class="absolute" blobColors={props.blobColors} />
-      {props.children}
+    <div class="relative flex" {...other}>
+      <BlobsSvg class="absolute" blobColors={local.blobColors} />
+      {local.children}
     </div>
   );
 };

@@ -6,10 +6,11 @@ import { OfficeDaysLogo } from './OfficeDaysLogo';
 import { officeApi } from '../office/api';
 import { authApi } from '../auth/api';
 import { OfficeSelector } from '../office/OfficeSelector';
+import { Button } from '~/components/ui/button';
 
 export const Navbar: ParentComponent = () => {
   const navigating = useIsRouting();
-  const user = createAsync(() => authApi.getUser());
+  const user = createAsync(() => authApi.tryGetUser());
   const offices = createAsync(
     async () => {
       if (user()) {
@@ -32,10 +33,10 @@ export const Navbar: ParentComponent = () => {
         )}
       ></div>
       <div class="p-2 flex items-baseline w-full max-w-screen-lg mx-auto gap-4">
-        <A href="/" class="self-center">
+        <Button variant="ghost" as={A} href="/" class="self-center">
           <OfficeDaysLogo class="inline-block align-bottom mr-2" />
           <span class="text-lg">Office days</span>
-        </A>
+        </Button>
 
         <OfficeSelector offices={offices() ?? []} />
 

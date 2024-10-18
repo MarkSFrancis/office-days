@@ -51,6 +51,7 @@ Run `npm run db studio` to open [Drizzle Studio](https://orm.drizzle.team/drizzl
 1. Make any necessary changes to [./functions/db/schema.ts](./functions/db/schema.ts)
 1. Run `npm run db generate`
 1. Run `npm run db:migrate`. Note the column between `db` and `migrate`! Without this, Drizzle will silently fail to migrate
+1. Run `npm run db:supabase-types` to update the Supabase typescript definitions
 
 You can also use `npm run db push` to quickly push your schema up to a database. This is useful for prototyping quickly, but you should use migrations once you're happy with the changes.
 
