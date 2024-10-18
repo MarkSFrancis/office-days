@@ -3,7 +3,9 @@ import postgres from 'postgres';
 import * as schema from './schema';
 
 export const getDbClient = () => {
-  const pool = postgres(process.env.SUPABASE_DB_CONNECTION_STRING);
+  const pool = postgres(process.env.SUPABASE_DB_CONNECTION_STRING, {
+    prepare: false,
+  });
 
   const db = drizzle(pool, { schema });
 
