@@ -2,7 +2,7 @@
 
 Sync up with your team by seeing when which days colleagues are in.
 
-Check us out at [https://office-days.com](https://office-days.com)!
+Check us out at [https://office-days.com](https://office-days.com)
 
 ## Development
 
