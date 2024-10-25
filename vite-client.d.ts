@@ -15,7 +15,6 @@ namespace NodeJS {
   // Do not use `process.env` in Remix code. Use `context.cloudflare.env` instead.
   interface ProcessEnv {
     // .dev.vars
-    SUPABASE_DB_CONNECTION_STRING: string;
     DRIZZLE_KIT_CONNECTION_STRING: string;
     SUPABASE_SERVICE_KEY: string;
   }

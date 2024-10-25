@@ -33,17 +33,11 @@ export const profileApi = {
         refresh_token: refreshToken,
       });
 
-      console.log('Refresh result:', refreshResult);
-
       if (refreshResult.error) {
-        console.log('Failed to accept invite :(');
         throw refreshResult.error;
-      } else {
-        console.log('Invite accepted!');
       }
     }
 
-    console.log('Attempting to verify user...');
     const session = await supabase.auth.getSession();
     if (session.error) {
       throw session.error;
@@ -51,7 +45,6 @@ export const profileApi = {
       throw new Error('No session found');
     }
 
-    console.log('Successfully verified user:', session.data.session.user);
     return {
       acceptedInvite: !!refreshToken,
       user: session.data.session.user,

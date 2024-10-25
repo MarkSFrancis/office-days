@@ -6,18 +6,37 @@ Check us out at [https://office-days.com](https://office-days.com)
 
 ## Development
 
-Run the dev server:
+You'll need to create a `.dev.vars` file with the following secrets populated first:
+
+```sh
+# .dev.vars
+DRIZZLE_KIT_CONNECTION_STRING=EXAMPLE_VALUE
+SUPABASE_SERVICE_KEY=EXAMPLE_VALUE
+```
+
+Then a `.env` file with the following secrets populated:
+
+```sh
+# .env
+VITE_SUPABASE_URL=EXAMPLE_VALUE
+VITE_SUPABASE_KEY=EXAMPLE_VALUE
+WRANGLER_HYPERDRIVE_LOCAL_CONNECTION_STRING_DB=EXAMPLE_VALUE
+```
+
+Next, run the dev server:
 
 ```sh
 npm run dev
 ```
 
+### Technologies
+
 This project uses the following technologies:
 
 - [Remix](https://remix.run/)
-- [React](https://reactjs.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [TypeScript](https://www.typescriptlang.org/)
+- [Supabase](https://supabase.io/)
+- [Drizzle ORM](https://orm.drizzle.team/)
+- [Cloudflare Pages](https://pages.cloudflare.com/)
 
 ## Testing
 
@@ -48,11 +67,13 @@ Check the generated migration in [./app/db/migrations](./app/db/migrations) and 
 npm run db:migrate
 ```
 
-This project uses [Drizzle ORM](https://orm.drizzle.team/), so you get all the goodies that come with Drizzle by default, including a PostgreSQL client that you can use to browse the database.
+This project uses [Drizzle ORM](https://orm.drizzle.team/) with [Drizzle Kit](https://orm.drizzle.team/docs/kit-overview), so you get all the goodies that come with Drizzle by default, including [Drizzle Studio](https://orm.drizzle.team/drizzle-studio/overview).
 
 ```sh
 npm run db studio
 ```
+
+You can find more Drizzle Kit commands via [the docs](https://orm.drizzle.team/docs/kit-overview)
 
 ## Deployment
 

@@ -6,7 +6,7 @@ export const getDbClient = (context: AppLoadContext) => {
   const db = drizzle({
     schema,
     connection: {
-      url: context.cloudflare.env.SUPABASE_DB_CONNECTION_STRING,
+      url: context.cloudflare.env.DB.connectionString,
       max: 10,
     },
   });
