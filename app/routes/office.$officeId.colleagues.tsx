@@ -59,7 +59,7 @@ export const loader = async (ctx: LoaderFunctionArgs) => {
       .from(officeUsers)
       .where(eq(officeUsers.officeId, office.id))
       .innerJoin(users, eq(users.id, officeUsers.userId))
-      .innerJoin(profiles, eq(profiles.userId, officeUsers.userId));
+      .leftJoin(profiles, eq(profiles.userId, officeUsers.userId));
 
     return json({
       office,
