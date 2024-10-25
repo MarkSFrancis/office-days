@@ -3,7 +3,8 @@ node_modules
 /.cache
 .eslintcache
 /build
+.wrangler
+.DS_Store
+
 .env
 .dev.vars
-
-.wrangler

@@ -5,16 +5,15 @@ import {
   serializeCookieHeader,
 } from '@supabase/ssr';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '~/db/supabase-types';
 
 export const withSupabaseSsr = async <TResponse extends Response | undefined>(
   { request, context }: LoaderFunctionArgs | ActionFunctionArgs,
-  next: (params: { supabase: SupabaseClient<Database> }) => Promise<TResponse>
+  next: (params: { supabase: SupabaseClient }) => Promise<TResponse>
 ) => {
   const cookie = parseCookieHeader(request.headers.get('Cookie') ?? '');
   const headers = new Headers();
 
-  const supabase = createServerClient<Database>(
+  const supabase = createServerClient(
     import.meta.env.VITE_SUPABASE_URL,
     context.cloudflare.env.SUPABASE_SERVICE_KEY,
     {
