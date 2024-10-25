@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "build": "remix vite:build",
-    "deploy": "wrangler pages deploy ./build/client",
     "dev": "remix vite:dev",
     "type-check": "tsc",
     "test": "vitest --changed origin/main",
