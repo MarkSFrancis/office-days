@@ -74,6 +74,7 @@ export default function OfficeInvitePage() {
 
   const inviteForm = useForm<z.output<typeof InviteToOfficeSchema>>({
     validator,
+    action: `/office/${params.officeId}/invite`,
     method: 'post',
   });
 
