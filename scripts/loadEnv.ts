@@ -1,6 +1,5 @@
-import { loadEnv } from 'vite';
+import dotenv from 'dotenv';
 
-process.env = {
-  ...process.env,
-  ...loadEnv('development', process.cwd(), ''),
-};
+dotenv.config({
+  path: ['.env', '.dev.vars'],
+});

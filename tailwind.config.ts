@@ -2,7 +2,8 @@ import { Config } from 'tailwindcss';
 import tailwindAnimate from 'tailwindcss-animate';
 
 export default {
-  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  darkMode: ['class'],
+  content: ['./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}'],
   prefix: '',
   theme: {
     container: {
@@ -64,23 +65,11 @@ export default {
       keyframes: {
         'accordion-down': {
           from: { height: '0' },
-          to: { height: 'var(--kb-accordion-content-height)' },
+          to: { height: 'var(--radix-accordion-content-height)' },
         },
         'accordion-up': {
-          from: { height: 'var(--kb-accordion-content-height)' },
+          from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
-        },
-        'content-show': {
-          from: { opacity: '0', transform: 'scale(0.96)' },
-          to: { opacity: '1', transform: 'scale(1)' },
-        },
-        'content-hide': {
-          from: { opacity: '1', transform: 'scale(1)' },
-          to: { opacity: '0', transform: 'scale(0.96)' },
-        },
-        'caret-blink': {
-          '0%,70%,100%': { opacity: '1' },
-          '20%,50%': { opacity: '0' },
         },
         'opacity-pulse': {
           '0%, 100%': { opacity: '0' },
@@ -90,9 +79,6 @@ export default {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'content-show': 'content-show 0.2s ease-out',
-        'content-hide': 'content-hide 0.2s ease-out',
-        'caret-blink': 'caret-blink 1.25s ease-out infinite',
         'opacity-pulse':
           'opacity-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },

@@ -74,6 +74,11 @@ export default ts.config(
           name: 'node:test',
           message: 'Use vitest instead',
         },
+        {
+          name: '@react-email/components',
+          message:
+            'Use the relevant component directly (e.g. @react-email/text)',
+        },
       ],
     },
   }
