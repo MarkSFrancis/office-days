@@ -17,7 +17,7 @@ import { withSupabaseSsr } from './supabase/ssrSupabase';
 import { json, LoaderFunctionArgs, MetaFunction } from '@remix-run/cloudflare';
 import { getDbClient } from './db/client';
 import { offices, officeUsers, profiles } from './db/schema';
-import { eq, isNull } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import {
   Card,
   CardContent,
@@ -31,6 +31,9 @@ import { nullPropsToUndefined } from './lib/utils';
 import { AppNavbar } from './features/nav/AppNavbar';
 import { Toaster } from 'react-hot-toast';
 import { Profile } from './features/profile/api';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { useState } from 'react';
+import { createQueryClient } from './lib/createQueryClient';
 
 export const meta: MetaFunction = () => [
   {
@@ -65,8 +68,8 @@ export async function loader(ctx: LoaderFunctionArgs) {
           displayName: offices.displayName,
         })
         .from(offices)
-        .innerJoin(officeUsers, eq(officeUsers.userId, user.id))
-        .where(isNull(offices.deletedOn))
+        .innerJoin(officeUsers, eq(officeUsers.officeId, offices.id))
+        .where(and(eq(officeUsers.userId, user.id), isNull(offices.deletedOn)))
         .groupBy(offices.id, offices.displayName)
         .execute(),
     ]);
@@ -80,6 +83,8 @@ export async function loader(ctx: LoaderFunctionArgs) {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const [client] = useState(createQueryClient);
+
   return (
     <html lang="en">
       <head>
@@ -89,10 +94,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
-        <Toaster />
-        <ScrollRestoration />
-        <Scripts />
+        <QueryClientProvider client={client}>
+          {children}
+          <Toaster />
+          <ScrollRestoration />
+          <Scripts />
+        </QueryClientProvider>
       </body>
     </html>
   );

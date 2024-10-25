@@ -81,7 +81,6 @@ export const loader = async (ctx: LoaderFunctionArgs) => {
         userAvatarUrl: profiles.avatarUrl,
       })
       .from(officeAttendance)
-      .innerJoin(officeUsers, eq(officeUsers.officeId, officeId))
       .innerJoin(users, eq(users.id, officeAttendance.userId))
       .leftJoin(profiles, eq(profiles.userId, officeAttendance.userId))
       .where(
