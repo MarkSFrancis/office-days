@@ -20,13 +20,15 @@ export const AcceptInvite = forwardRef<HTMLDivElement, ComponentProps<'div'>>(
         toast.error('Failed to accept invite');
         navigate('/auth/sign-in');
       },
-      onSuccess: () => {
-        toast.success(
-          <div className="space-y-2">
-            <p>Welcome to Office days! It's great to have you here ❤️</p>
-            <p>To get started, set a password</p>
-          </div>
-        );
+      onSuccess: (data) => {
+        if (data.acceptedInvite) {
+          toast.success(
+            <div className="space-y-2">
+              <p>Welcome to Office days! It's great to have you here ❤️</p>
+              <p>To get started, set a password</p>
+            </div>
+          );
+        }
         setLoaded(true);
       },
     });
