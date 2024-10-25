@@ -67,7 +67,7 @@ export const action = async (ctx: ActionFunctionArgs) => {
       const newUser = await supabase.auth.admin.inviteUserByEmail(
         res.data.email,
         {
-          redirectTo: `${ENV_URL}/office/${res.data.officeId}`,
+          redirectTo: `${ENV_URL}/auth/update-password`,
         }
       );
 
