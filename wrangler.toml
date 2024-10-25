@@ -5,3 +5,4 @@ compatibility_flags = ["nodejs_compat"]
 [[hyperdrive]]
 binding = "DB"
 id = "2c767ce0fab842108ab723aff8c9d24c"
+localConnectionString = "postgresql://PLACEHOLDER:PLACEHOLDER@PLACEHOLDER.supabase.com:6543/postgres"
