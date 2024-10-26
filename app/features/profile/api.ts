@@ -1,4 +1,3 @@
-import { queryOptions } from '@tanstack/react-query';
 import { createSupabaseBrowserClient } from '~/supabase/csrSupabase';
 
 export interface Profile {

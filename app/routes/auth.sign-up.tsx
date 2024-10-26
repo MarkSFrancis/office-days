@@ -69,18 +69,7 @@ export default function SignInPage() {
                   scope={form.scope('password')}
                   render={({ field }) => (
                     <div className="space-y-2">
-                      <div className="flex items-center">
-                        <FormLabel>Password</FormLabel>
-                        <Button
-                          asChild
-                          variant="link"
-                          className="ml-auto h-auto text-sm"
-                        >
-                          <Link to="/auth/reset-password">
-                            Forgot your password?
-                          </Link>
-                        </Button>
-                      </div>
+                      <FormLabel>Password</FormLabel>
                       <Input
                         type="password"
                         autoComplete="current-password"

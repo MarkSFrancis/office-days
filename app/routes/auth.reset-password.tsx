@@ -2,6 +2,7 @@ import { ActionFunctionArgs, redirect } from '@remix-run/cloudflare';
 import { Link, MetaFunction } from '@remix-run/react';
 import { validationError } from '@rvf/remix';
 import { withZod } from '@rvf/zod';
+import { SendIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 import { Form } from '~/components/forms/Form';
@@ -51,15 +52,10 @@ export default function ResetPasswordPage() {
         }
       );
     },
-    onBeforeSubmit: () => {
-      toast.loading('Loading...', {
-        id: 'reset-password',
-      });
-    },
   });
 
   return (
-    <Form form={form}>
+    <Form className="mx-auto mt-4 space-y-4 w-full" form={form}>
       <fieldset
         disabled={form.formState.isSubmitting}
         className="flex justify-center items-center"
@@ -91,7 +87,12 @@ export default function ResetPasswordPage() {
                   </div>
                 )}
               />
-              <Button type="submit" className="w-full">
+              <Button
+                isPending={form.formState.isSubmitting}
+                type="submit"
+                className="w-full"
+              >
+                {!form.formState.isSubmitting && <SendIcon className="mr-2" />}
                 Send me a reset email
               </Button>
             </div>
@@ -132,6 +133,6 @@ export const action = async (ctx: ActionFunctionArgs) => {
       throw reset.error;
     }
 
-    return redirect('/auth/sign-in');
+    return redirect('/auth/reset-password');
   });
 };

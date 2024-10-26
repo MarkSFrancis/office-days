@@ -71,11 +71,6 @@ export default function ProfilePage() {
         id: 'profile-updated',
       });
     },
-    onBeforeSubmit: () => {
-      toast.loading('Saving profile...', {
-        id: 'profile-updated',
-      });
-    },
   });
 
   return (
@@ -94,16 +89,6 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent className="md:px-16">
               <div className="grid gap-4">
-                <FormField
-                  scope={form.scope('avatarUrl')}
-                  render={({ field }) => (
-                    <div className="space-y-2">
-                      <FormLabel>Avatar URL</FormLabel>
-                      <Input type="url" {...field} />
-                      <FormMessage />
-                    </div>
-                  )}
-                />
                 <FormField
                   scope={form.scope('firstName')}
                   render={({ field }) => (

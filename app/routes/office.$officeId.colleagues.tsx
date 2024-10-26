@@ -24,10 +24,15 @@ import { InviteToOfficeSchema, validator } from './office.$officeId.invite';
 import { getDbClient } from '~/db/client';
 import { officeUsers, profiles, users } from '~/db/schema';
 import { eq } from 'drizzle-orm';
+import { UserDisplay } from '~/features/profile/UserDisplay';
+import { nullPropsToUndefined } from '~/lib/utils';
 
-export const meta: MetaFunction = (ctx) => [
+export const meta: MetaFunction<typeof loader> = (ctx) => [
   {
-    title: getTitle(ctx, 'Colleagues'),
+    title: getTitle(ctx, [
+      ctx.data?.office.displayName ?? 'Office',
+      'Colleagues',
+    ]),
   },
 ];
 
@@ -59,7 +64,8 @@ export const loader = async (ctx: LoaderFunctionArgs) => {
       .from(officeUsers)
       .where(eq(officeUsers.officeId, office.id))
       .innerJoin(users, eq(users.id, officeUsers.userId))
-      .leftJoin(profiles, eq(profiles.userId, officeUsers.userId));
+      .leftJoin(profiles, eq(profiles.userId, officeUsers.userId))
+      .then((r) => r.map((c) => nullPropsToUndefined(c)));
 
     return json({
       office,
@@ -88,11 +94,20 @@ export default function OfficeInvitePage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="md:px-16">
-          <ul className="grid gap-4 list-disc">
+          <ul className="grid gap-0">
             {data.allColleagues.map((c) => (
-              // TODO: Add a UserDisplay component
               // TODO: Add a way to remove a colleague
-              <li key={c.id}>{c.email}</li>
+              <li
+                className="bg-white border p-4 hover:shadow-md transition-shadow"
+                key={c.id}
+              >
+                <UserDisplay
+                  email={c.email}
+                  avatarUrl={c.avatarUrl}
+                  firstName={c.firstName}
+                  lastName={c.lastName}
+                />
+              </li>
             ))}
           </ul>
         </CardContent>
