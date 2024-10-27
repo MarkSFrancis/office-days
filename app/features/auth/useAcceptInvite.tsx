@@ -54,14 +54,10 @@ export const useAcceptInvite = () => {
       navigate('/auth/sign-in');
     },
     onSuccess: (data) => {
-      if (!data.acceptedInvite) {
-        console.info(
-          'No invite found, but user is already logged in. Redirecting to /'
-        );
-        // navigate('/', { replace: true });
-        // return;
+      if (data.acceptedInvite) {
+        // Just signed in. Reload the page
+        navigate('/auth/accept-invite', { replace: true });
       }
-
       setIsAccepting(false);
     },
   });

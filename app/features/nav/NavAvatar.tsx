@@ -47,7 +47,7 @@ export const NavAvatar: FC<NavAvatarProps> = (props) => {
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link className="cursor-pointer" to="/auth/update-password">
-            Change my password
+            Update my password
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

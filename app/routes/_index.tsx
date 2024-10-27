@@ -7,6 +7,7 @@ import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -55,32 +56,57 @@ export default function Index() {
 
   return (
     <div className="mx-auto py-4 px-2 max-w-screen-lg w-full">
-      <ul className="flex flex-wrap gap-4 w-full">
-        {data.offices.map((office) => (
-          <li
-            key={office.id}
-            className="group list-none flex-grow overflow-hidden border-2"
-          >
-            <AppBackground colorsSeed={office.id}>
-              <Link
-                className="relative inline-block max-w-screen w-full min-w-48 overflow-hidden rounded-md"
-                to={`/office/${office.id}`}
-              >
-                <div className="w-full h-full">
-                  <div className="w-full px-6 pt-4 pb-[50%] bg-gradient-to-b from-white/90 to-transparent">
-                    <div className="flex flex-row items-center justify-between space-y-0">
-                      <h3 className="text-4xl font-normal">
-                        {office.displayName}
-                      </h3>
-                      <ChevronRight className="group-hover:translate-x-2 transition-transform" />
+      {data.offices.length ? (
+        <ul className="flex flex-wrap gap-4 w-full">
+          {data.offices.map((office) => (
+            <li
+              key={office.id}
+              className="group list-none flex-grow overflow-hidden border-2"
+            >
+              <AppBackground colorsSeed={office.id}>
+                <Link
+                  className="relative inline-block max-w-screen w-full min-w-48 overflow-hidden rounded-md"
+                  to={`/office/${office.id}`}
+                >
+                  <div className="w-full h-full">
+                    <div className="w-full px-6 pt-4 pb-[50%] bg-gradient-to-b from-white/90 to-transparent">
+                      <div className="flex flex-row items-center justify-between space-y-0">
+                        <h3 className="text-4xl font-normal">
+                          {office.displayName}
+                        </h3>
+                        <ChevronRight className="group-hover:translate-x-2 transition-transform" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            </AppBackground>
-          </li>
-        ))}
-      </ul>
+                </Link>
+              </AppBackground>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <Card className="mx-auto max-w-sm md:max-w-lg w-full">
+          <CardHeader className="md:px-16 md:pt-8">
+            <CardTitle className="text-4xl font-light">
+              Welcome to Office days
+            </CardTitle>
+            <CardDescription className="space-y-1">
+              It's great to have you here ❤️
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="md:px-16">
+            <p>
+              To get started, you'll need to be invited by your colleague to
+              their office, or create a new office
+            </p>
+          </CardContent>
+
+          <CardFooter className="md:px-16 gap-2">
+            <Button asChild>
+              <Link to="/office/new">Create a new office</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
     </div>
   );
 }

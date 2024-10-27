@@ -1,18 +1,19 @@
 import { Button } from '~/components/ui/button';
 import { NavAvatar } from '../nav/NavAvatar';
-import { User } from '@supabase/supabase-js';
 import { FC } from 'react';
 import { Profile } from '../profile/api';
 import { Link } from '@remix-run/react';
+import { useUser } from '../auth/useUser';
 
 export interface NavAuthProps {
-  user: User | undefined;
   profile: Profile | undefined;
 }
 
 export const NavAuth: FC<NavAuthProps> = (props) => {
-  if (props.user) {
-    return <NavAvatar user={props.user} profile={props.profile} />;
+  const user = useUser();
+
+  if (user) {
+    return <NavAvatar user={user} profile={props.profile} />;
   }
 
   return (

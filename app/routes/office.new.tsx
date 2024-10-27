@@ -1,4 +1,5 @@
 import { ActionFunctionArgs, redirect } from '@remix-run/cloudflare';
+import { Link } from '@remix-run/react';
 import { validationError } from '@rvf/remix';
 import { withZod } from '@rvf/zod';
 import { z } from 'zod';
@@ -14,6 +15,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
+  CardFooter,
 } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { getDbClient } from '~/db/client';
@@ -43,7 +45,10 @@ export default function NewOfficePage() {
         <Card className="mx-auto mt-4 max-w-sm md:max-w-lg w-full">
           <CardHeader className="md:px-16 md:pt-8">
             <CardTitle className="text-2xl font-light">New office</CardTitle>
-            <CardDescription>Create a new office here</CardDescription>
+            <CardDescription>
+              You can invite your colleagues once your new office has been
+              created
+            </CardDescription>
           </CardHeader>
           <CardContent className="md:px-16">
             <div className="grid gap-4">
@@ -66,6 +71,15 @@ export default function NewOfficePage() {
               </Button>
             </div>
           </CardContent>
+          <CardFooter className="bg-muted md:px-16 py-4 text-sm justify-center">
+            <div>
+              <p>Has your team already set up an office?</p>
+              <p className="text-muted-foreground">
+                They'll need to invite you via the "Colleagues" button in the
+                top-right of their office view
+              </p>
+            </div>
+          </CardFooter>
         </Card>
       </fieldset>
     </Form>

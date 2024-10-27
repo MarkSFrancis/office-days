@@ -46,11 +46,14 @@ export const loader = async (ctx: LoaderFunctionArgs) => {
 
       if (session.error) {
         throw session.error;
+      } else {
+        // Session loaded - refresh so that the user's info is loaded in all the loaders in the stack.
+        // This is necessary because loaders run in parallel in Remix, so we need to restart them all again to avoid race conditions
+        return redirect('/auth/update-password');
       }
     }
 
     // Verify that the user has a valid session
-    // Note that because loaders run in parallel in Remix, the navbar will likely not be updated with the user's info in the UI
     await getSsrUser(supabase);
 
     return json({});
@@ -83,7 +86,7 @@ export default function UpdatePasswordPage() {
           <Card className="mx-auto max-w-sm md:max-w-lg w-full">
             <CardHeader className="md:px-16 md:pt-8">
               <CardTitle className="text-2xl font-light">
-                Update your password
+                Update my password
               </CardTitle>
               <CardDescription>
                 Enter a new password for your account

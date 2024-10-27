@@ -2,21 +2,21 @@ import { cn } from '~/lib/utils';
 import { OfficeDaysLogo } from './OfficeDaysLogo';
 import { Link, useNavigation } from '@remix-run/react';
 import { FC } from 'react';
-import { User } from '@supabase/supabase-js';
 import { NavAuth } from './NavAuth';
 import { Profile } from '../profile/api';
 import { Office } from '../office/api';
 import { OfficeSelector } from './OfficeSelector';
 import { Navbar, NavbarContent } from './Navbar';
+import { useUser } from '../auth/useUser';
 
 export interface AppNavbarProps {
-  user: User | undefined;
   profile: Profile | undefined;
   offices: Office[];
 }
 
 export const AppNavbar: FC<AppNavbarProps> = (props) => {
   const navigation = useNavigation();
+  const user = useUser();
 
   return (
     <Navbar>
@@ -32,11 +32,11 @@ export const AppNavbar: FC<AppNavbarProps> = (props) => {
           <span className="text-lg">Office days</span>
         </Link>
 
-        {!!props.user && <OfficeSelector offices={props.offices} />}
+        {!!user && <OfficeSelector offices={props.offices} />}
 
         <div className="flex-grow"></div>
 
-        <NavAuth user={props.user} profile={props.profile} />
+        <NavAuth profile={props.profile} />
       </NavbarContent>
     </Navbar>
   );

@@ -34,6 +34,7 @@ import { Profile } from './features/profile/api';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
 import { createQueryClient } from './lib/createQueryClient';
+import { UserProvider } from './features/auth/useUser';
 
 export const meta: MetaFunction = () => [
   {
@@ -164,15 +165,13 @@ export default function App() {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <div className="grid min-h-screen grid-rows-[auto,_minmax(0,_1fr)]">
-      <AppNavbar
-        offices={data?.offices ?? []}
-        profile={data?.profile}
-        user={data?.user}
-      />
-      <AppBackground colorsSeed={params.officeId}>
-        <Outlet />
-      </AppBackground>
-    </div>
+    <UserProvider>
+      <div className="grid min-h-screen grid-rows-[auto,_minmax(0,_1fr)]">
+        <AppNavbar offices={data?.offices ?? []} profile={data?.profile} />
+        <AppBackground colorsSeed={params.officeId}>
+          <Outlet />
+        </AppBackground>
+      </div>
+    </UserProvider>
   );
 }
